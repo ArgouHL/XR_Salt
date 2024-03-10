@@ -27,17 +27,15 @@ public class RelayLink : MonoBehaviour
     private string myAddressLocal;
     private string myAddressGlobal;
 
-    string ip;
-    string port;
-
 
     private void Awake()
     {
         instance = this;
-        DebugLogConsole.AddCommandInstance("CreateServer", "CreateServer", "CreateServer", this);
-        DebugLogConsole.AddCommandInstance("CreateHost", "CreateHost", "CreateHost", this);
+        DebugLogConsole.AddCommandInstance("LanServer", "LanServer", "CreateLanServer", this);
+        DebugLogConsole.AddCommandInstance("ServerRelay", "ServerRelay", "CreateServerRelay", this);
         DebugLogConsole.AddCommandInstance("JoinIP", "JoinIP", "JoinIP", this);
-        DebugLogConsole.AddCommandInstance("GetServerIP", "GetServerIP", "GetServerIP", this);
+        DebugLogConsole.AddCommandInstance("JoinRelay", "JoinRelay", "JoinRelay", this);
+
 
     }
 
@@ -52,14 +50,14 @@ public class RelayLink : MonoBehaviour
        };
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        StartCoroutine(GetRegion());
+    
 
     }
 
     private void GetIP()
     {
 
-        string strHostName = "";
+        //string strHostName = "";
         //strHostName = Dns.GetHostName();
 
         //var ipEntry = Dns.GetHostEntry(strHostName);
@@ -105,24 +103,24 @@ public class RelayLink : MonoBehaviour
 
     }
 
-    public async void CreateServer()
+    public void CreateLanServer()
     {
-        if (!IsReagionTested)
-            return;
+        //if (!IsReagionTested)
+        //    return;
         try
         {
 
-            Allocation alloc = await RelayService.Instance.CreateAllocationAsync(5, r);
-            string newJoinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
-            Debug.Log(newJoinCode);
+            //Allocation alloc = await RelayService.Instance.CreateAllocationAsync(5, r);
+            //string newJoinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
+            //Debug.Log(newJoinCode);
 
-            RelayServerData relayServerData = new RelayServerData(alloc, "dtls");
-             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
-            CreateLobbyOptions lobbyOptions = new CreateLobbyOptions();
-            lobbyOptions.IsPrivate = false;
-            lobbyOptions.Data = new Dictionary<string, DataObject>();
-            DataObject dataObject = new DataObject(DataObject.VisibilityOptions.Public, newJoinCode);
-            lobbyOptions.Data.Add("JoinCode", dataObject);
+            //RelayServerData relayServerData = new RelayServerData(alloc, "dtls");
+            // NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+            //CreateLobbyOptions lobbyOptions = new CreateLobbyOptions();
+            //lobbyOptions.IsPrivate = false;
+            //lobbyOptions.Data = new Dictionary<string, DataObject>();
+            //DataObject dataObject = new DataObject(DataObject.VisibilityOptions.Public, newJoinCode);
+            //lobbyOptions.Data.Add("JoinCode", dataObject);
 
 
 
@@ -138,8 +136,8 @@ public class RelayLink : MonoBehaviour
             //lobbyOptions.IsLocked = false;
             //lobbyOptions.Data.Add("IP", dataObject);
             //        lobbyOptions.Data.Add("Port", dataObject2);
-            curentLobby = await Lobbies.Instance.CreateLobbyAsync("XR_Lobby", 4, lobbyOptions);
-            Debug.Log(curentLobby.Id);
+           // curentLobby = await Lobbies.Instance.CreateLobbyAsync("XR_Lobby", 4, lobbyOptions);
+          //  Debug.Log(curentLobby.Id);
 
             NetworkManager.Singleton.StartServer();
             NetWorkUI.instance.HideUI("Server");
@@ -152,24 +150,28 @@ public class RelayLink : MonoBehaviour
             Debug.Log(e);
         }
     }
-
-    public async void CreateHost()
+    public void CreateServerRelay()
+    {
+        StartCoroutine(SetRelayServer());       
+        
+    }
+    public void CreateHost()
     {
         try
         {
 
-            Allocation alloc = await RelayService.Instance.CreateAllocationAsync(5, r);
-            string newJoinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
-            Debug.Log(newJoinCode);
+            //Allocation alloc = await RelayService.Instance.CreateAllocationAsync(5, r);
+            //string newJoinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
+            //Debug.Log(newJoinCode);
 
-            RelayServerData relayServerData = new RelayServerData(alloc, "dtls");
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+            //RelayServerData relayServerData = new RelayServerData(alloc, "dtls");
+            //NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
-            CreateLobbyOptions lobbyOptions = new CreateLobbyOptions();
-            lobbyOptions.IsPrivate = false;
-            lobbyOptions.Data = new Dictionary<string, DataObject>();
-            DataObject dataObject = new DataObject(DataObject.VisibilityOptions.Public, newJoinCode);
-            lobbyOptions.Data.Add("JoinCode", dataObject);
+            //CreateLobbyOptions lobbyOptions = new CreateLobbyOptions();
+            //lobbyOptions.IsPrivate = false;
+            //lobbyOptions.Data = new Dictionary<string, DataObject>();
+            //DataObject dataObject = new DataObject(DataObject.VisibilityOptions.Public, newJoinCode);
+            //lobbyOptions.Data.Add("JoinCode", dataObject);
 
 
 
@@ -183,7 +185,7 @@ public class RelayLink : MonoBehaviour
 
             //lobbyOptions.Data.Add("IP", dataObject);
 
-            curentLobby = await Lobbies.Instance.CreateLobbyAsync("L", 5, lobbyOptions);
+          //  curentLobby = await Lobbies.Instance.CreateLobbyAsync("L", 5, lobbyOptions);
 
 
             NetworkManager.Singleton.StartHost();
@@ -229,12 +231,9 @@ public class RelayLink : MonoBehaviour
         }    
         
     }
-    public async void Join()
+    public async void JoinRelay()
     {
-
-
-        var curentLobby = await Lobbies.Instance.QueryLobbiesAsync();
-        
+        var curentLobby = await Lobbies.Instance.QueryLobbiesAsync();        
         string joinCode = curentLobby.Results[0].Data["JoinCode"].Value;
         Debug.Log("Join" + joinCode);
         try
@@ -243,8 +242,7 @@ public class RelayLink : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(alloc, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-            transport.ConnectionData.Address = ip;
-            Debug.Log(ip);
+         
             NetworkManager.Singleton.StartClient();
             NetWorkUI.instance.HideUI("Client");
 
@@ -257,9 +255,8 @@ public class RelayLink : MonoBehaviour
     }
 
 
-    private IEnumerator GetRegion()
+    private IEnumerator SetRelayServer()
     {
-
         // Request list of valid regions
         var regionsTask = Relay.Instance.ListRegionsAsync();
 
@@ -278,14 +275,10 @@ public class RelayLink : MonoBehaviour
 
         IList<string> list = new List<string>();
 
-
         foreach (var region in regionList)
         {
             list.Add(region.Id);
-
         }
-
-
 
         var qosResultsForRegion = QosService.Instance.GetSortedQosResultsAsync("relay", list);
         while (!qosResultsForRegion.IsCompleted)
@@ -300,8 +293,7 @@ public class RelayLink : MonoBehaviour
         }
         int i = 999999;
         foreach (var region in qosResultsForRegion.Result)
-        {
-            Debug.Log(region.Region + ";" + region.AverageLatencyMs + ";" + region.PacketLossPercent);
+        {           
             if (region.AverageLatencyMs < i)
             {
 
@@ -312,11 +304,42 @@ public class RelayLink : MonoBehaviour
             //Debug.Log(region.Region +";" + region.AverageLatencyMs);
 
         }
-
-        IsReagionTested = true;
         Debug.Log("SelectRegion : " + r + ";" + i);
+        RelayServer();
+        
 
     }
+    private async void RelayServer()
+    {
+        try
+        {
 
+            Allocation alloc = await RelayService.Instance.CreateAllocationAsync(5, r);
+            string newJoinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
+            Debug.Log(newJoinCode);
+
+            RelayServerData relayServerData = new RelayServerData(alloc, "dtls");
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+            CreateLobbyOptions lobbyOptions = new CreateLobbyOptions();
+            lobbyOptions.IsPrivate = false;
+            lobbyOptions.Data = new Dictionary<string, DataObject>();
+            DataObject dataObject = new DataObject(DataObject.VisibilityOptions.Public, newJoinCode);
+            lobbyOptions.Data.Add("JoinCode", dataObject);
+
+
+            curentLobby = await Lobbies.Instance.CreateLobbyAsync("XR_Lobby", 4, lobbyOptions);
+
+
+            NetworkManager.Singleton.StartServer();
+            NetWorkUI.instance.HideUI("Server");
+
+
+
+        }
+        catch (RelayServiceException e)
+        {
+            Debug.Log(e);
+        }
+    }
 
 }
