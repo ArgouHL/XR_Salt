@@ -21,7 +21,7 @@ public class ExampleNetworkDiscoveryHud : MonoBehaviour
 
     Dictionary<IPAddress, DiscoveryResponseData> discoveredServers = new Dictionary<IPAddress, DiscoveryResponseData>();
 
-    public Vector2 DrawOffset = new Vector2(10, 210);
+    public Vector2 DrawOffset = new Vector2(50, 210);
 
     void Awake()
     {
@@ -48,7 +48,10 @@ public class ExampleNetworkDiscoveryHud : MonoBehaviour
 
     void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(200, 600)));
+#if UNITY_ANDROID &&!UNITY_EDITOR
+        return;
+#endif
+        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(600, 1000)));
 
         if (m_NetworkManager.IsServer || m_NetworkManager.IsClient)
         {
@@ -67,6 +70,9 @@ public class ExampleNetworkDiscoveryHud : MonoBehaviour
 
     void ClientSearchGUI()
     {
+#if UNITY_ANDROID &&!UNITY_EDITOR
+        return;
+#endif
         if (m_Discovery.IsRunning)
         {
             if (GUILayout.Button("Stop Client Discovery"))
@@ -81,7 +87,7 @@ public class ExampleNetworkDiscoveryHud : MonoBehaviour
                 m_Discovery.ClientBroadcast(new DiscoveryBroadcastData());
             }
             
-            GUILayout.Space(40);
+            GUILayout.Space(100);
             
             foreach (var discoveredServer in discoveredServers)
             {

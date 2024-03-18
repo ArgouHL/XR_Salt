@@ -32,11 +32,18 @@ public class PlayerTest : NetworkBehaviour
     void Update()
     {      
         if (!IsOwner)
-            return;   
-        if(IsPressed)
+            return;
+        if (Input.GetKey(KeyCode.Space))
         {
-            transform.position += new Vector3(currentMovement.x, 0, currentMovement.y) * Time.deltaTime * 5;
+            var g = GameObject.Find("TestCube").GetComponent<NetworkObject>();
+            ChangeOwnershipServerRpc(g,OwnerClientId);
+            g.transform.position += Vector3.up;
         }
+            
+        //if(IsPressed)
+        //{
+        //    transform.position += new Vector3(currentMovement.x, 0, currentMovement.y) * Time.deltaTime * 5;
+        //}
         //if (Input.GetKey(KeyCode.W))
         //{
         //    transform.position += Vector3.forward * Time.deltaTime * 5;
@@ -71,9 +78,16 @@ public class PlayerTest : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void TestServerRpc()
+    private void ChangeOwnershipServerRpc(NetworkObjectReference g, ulong ownerClientId)
     {
-        TestServerRpc("");
+       if(g.TryGet(out NetworkObject networkObject))
+        {
+            networkObject.ChangeOwnership(ownerClientId);
+        }
+       else
+        {
+            Debug.LogWarning("Change fail");
+        }
     }
 
     [ServerRpc]

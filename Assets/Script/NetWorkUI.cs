@@ -7,17 +7,19 @@ using TMPro;
 
 public class NetWorkUI : MonoBehaviour
 {
-    [SerializeField] private Button serverBtn;    
-    [SerializeField] private Button hostBtn;    
-    [SerializeField] private Button clientBtn;
-    [SerializeField] private CanvasGroup canvas;
-    [SerializeField] private TMP_Text stateText;
-    [SerializeField] private TMP_Text pingText;
+    [SerializeField] protected Button lanServerBtn;
+    [SerializeField] protected Button relayServerBtn;
+    [SerializeField] protected Button relayHostBtn;    
+    [SerializeField] protected Button clientBtn;
+    [SerializeField] protected Button lanclientBtn;
+    [SerializeField] protected CanvasGroup canvas;
+    [SerializeField] protected TMP_Text stateText;
+    [SerializeField] protected TMP_Text pingText;
 
     public static NetWorkUI instance;
     public delegate void UpdateEvent();
     public UpdateEvent OnUpdate;
-
+    public ulong ping;
     private void OnDisable()
     {
         OnUpdate = null;
@@ -29,33 +31,50 @@ public class NetWorkUI : MonoBehaviour
         OnUpdate?.Invoke();
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
+
+
         canvas = GetComponent<CanvasGroup>();
         instance = this;
 
-        serverBtn.onClick.AddListener(() =>
+        relayServerBtn.onClick.AddListener(() =>
         {
             RelayLink.instance.CreateServerRelay();
         });
 
-        hostBtn.onClick.AddListener(() =>
+        lanServerBtn.onClick.AddListener(() =>
         {
             RelayLink.instance.CreateLanServer();
         });
+
+        relayHostBtn.onClick.AddListener(() =>
+        {
+            RelayLink.instance.CreateHost();
+        });
+
 
         clientBtn.onClick.AddListener(() =>
         {
             RelayLink.instance.JoinRelay();
         });
+
+        lanclientBtn.onClick.AddListener(() =>
+        {
+            RelayLink.instance.JoinLan();
+        });
+
+
+
     }
 
-    public void HideUI(string state)
+    public void HideUI(string state,bool showFPS=true)
     {
 
         canvas.alpha = 0;
         canvas.interactable = false;
         stateText.text = state;
+        if(showFPS)
         OnUpdate += ShowPing;
     }
 
@@ -67,7 +86,7 @@ public class NetWorkUI : MonoBehaviour
     {
         if (canvas.alpha <1)
         {
-            ulong ping = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.NetworkConfig.NetworkTransport.ServerClientId);
+             ping = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.NetworkConfig.NetworkTransport.ServerClientId);
             pingText.text = ping.ToString();
         }
      

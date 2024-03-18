@@ -18,6 +18,7 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
         Response = 1,
     }
 
+
     UdpClient m_Client;
 
     [SerializeField] ushort m_Port = 47777;
@@ -64,7 +65,9 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
         }
 
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast, m_Port);
-
+        Debug.Log("IPAddress.Broadcast: " + IPAddress.Broadcast);
+        Debug.Log("endPoint: "+endPoint.Address);
+        Debug.Log("em_Port: " + m_Port);
         using (FastBufferWriter writer = new FastBufferWriter(1024, Allocator.Temp, 1024 * 64))
         {
             
@@ -76,13 +79,17 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
             try
             {
                 // This works because PooledBitStream.Get resets the position to 0 so the array segment will always start from 0.
-                m_Client.SendAsync(data, data.Length, endPoint);
+                var task=m_Client.SendAsync(data, data.Length, endPoint);
+                Debug.Log(task.Result);
+
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
             }
         }
+
+       
     }
 
     /// <summary>
@@ -137,6 +144,8 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
     /// <param name="sender">The sender of the response</param>
     /// <param name="response">The value of the response</param>
     protected abstract void ResponseReceived(IPEndPoint sender, TResponse response);
+    protected abstract void ResponseNoIP();
+
 
     void StartDiscovery(bool isServer)
     {
@@ -148,7 +157,7 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
         // If we are not a server we use the 0 port (let udp client assign a free port to us)
         var port = isServer ? m_Port : 0;
 
-        m_Client = new UdpClient(port) {EnableBroadcast = true, MulticastLoopback = false};
+        m_Client = new UdpClient(port) {EnableBroadcast = true, MulticastLoopback = false}; 
 
         _ = ListenAsync(isServer ? ReceiveBroadcastAsync : new Func<Task>(ReceiveResponseAsync));
 
@@ -159,42 +168,56 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
     {
         while (true)
         {
+          
             try
             {
+              
                 await onReceiveTask();
+               
             }
             catch (ObjectDisposedException)
             {
+               
                 // socket has been closed
+
                 break;
             }
             catch (Exception)
             {
+              
             }
+           
         }
     }
 
     async Task ReceiveResponseAsync()
     {
+       
         UdpReceiveResult udpReceiveResult = await m_Client.ReceiveAsync();
 
         var segment = new ArraySegment<byte>(udpReceiveResult.Buffer, 0, udpReceiveResult.Buffer.Length);
         using var reader = new FastBufferReader(segment, Allocator.Persistent);
-
+        
         try
         {
+            Debug.Log("s1");
             if (ReadAndCheckHeader(reader, MessageType.Response) == false)
             {
+              
                 return;
             }
-            
+            Debug.Log("s1");
             reader.ReadNetworkSerializable(out TResponse receivedResponse);
+            Debug.Log("s1");
             ResponseReceived(udpReceiveResult.RemoteEndPoint, receivedResponse);
+            Debug.Log("s1");
+            Debug.Log(udpReceiveResult);
         }
         catch (Exception e)
         {
             Debug.LogException(e);
         }
+       
     }
 
     async Task ReceiveBroadcastAsync()
@@ -255,4 +278,40 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
 
         return true;
     }
+
+    public void TaskClientBroadcast(TBroadCast broadCast)
+    {
+        if (!IsClient)
+        {
+            throw new InvalidOperationException("Cannot send client broadcast while not running in client mode. Call StartClient first.");
+        }
+
+        IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast, m_Port);
+        Debug.Log("IPAddress.Broadcast: " + IPAddress.Broadcast);
+        Debug.Log("endPoint: " + endPoint.Address);
+        Debug.Log("em_Port: " + m_Port);
+        using (FastBufferWriter writer = new FastBufferWriter(1024, Allocator.Temp, 1024 * 64))
+        {
+
+            WriteHeader(writer, MessageType.BroadCast);
+
+            writer.WriteNetworkSerializable(broadCast);
+            var data = writer.ToArray();
+
+            try
+            {
+                // This works because PooledBitStream.Get resets the position to 0 so the array segment will always start from 0.
+                var task = m_Client.SendAsync(data, data.Length, endPoint);
+            
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
+       // return null;
+    }
+
 }

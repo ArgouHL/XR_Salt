@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 88bd1830057b843488a73b466ec4213a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - xrInput: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  - handAnimator: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

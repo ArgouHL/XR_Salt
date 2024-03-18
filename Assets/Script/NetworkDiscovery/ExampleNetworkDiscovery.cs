@@ -13,7 +13,11 @@ public class ExampleNetworkDiscovery : NetworkDiscovery<DiscoveryBroadcastData, 
     {
     };
 
-    NetworkManager m_NetworkManager;
+    [Serializable]
+    public class ServerNotFoundEvent : UnityEvent { };
+
+
+   NetworkManager m_NetworkManager;
     
     [SerializeField]
     [Tooltip("If true NetworkDiscovery will make the server visible and answer to client broadcasts as soon as netcode starts running as server.")]
@@ -22,11 +26,12 @@ public class ExampleNetworkDiscovery : NetworkDiscovery<DiscoveryBroadcastData, 
     public string ServerName = "EnterName";
 
     public ServerFoundEvent OnServerFound;
-    
+    public ServerNotFoundEvent OnServerNotFound;
     private bool m_HasStartedWithServer = false;
 
     public void Awake()
     {
+       
         m_NetworkManager = GetComponent<NetworkManager>();
     }
 
@@ -55,5 +60,12 @@ public class ExampleNetworkDiscovery : NetworkDiscovery<DiscoveryBroadcastData, 
     protected override void ResponseReceived(IPEndPoint sender, DiscoveryResponseData response)
     {
         OnServerFound.Invoke(sender, response);
+    }
+
+
+
+    protected override void ResponseNoIP()
+    {
+        OnServerNotFound.Invoke();
     }
 }
