@@ -41,8 +41,13 @@ public class RelayLink : MonoBehaviour
 
     private void Awake()
     {
-      
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
+        DontDestroyOnLoad(gameObject);
         DebugLogConsole.AddCommandInstance("LanServer", "LanServer", "CreateLanServer", this);
         DebugLogConsole.AddCommandInstance("ServerRelay", "ServerRelay", "CreateServerRelay", this);
         DebugLogConsole.AddCommandInstance("JoinIP", "JoinIP", "JoinIP", this);
@@ -383,12 +388,12 @@ public class RelayLink : MonoBehaviour
     }
 
 
-    public  void OnServerFound(IPEndPoint sender, DiscoveryResponseData response)
+    public void OnServerFound(IPEndPoint sender, DiscoveryResponseData response)
     {
 
         discoveredServers[sender.Address] = response;
         Debug.Log(discoveredServers.Count);
-        
+
         var ips = discoveredServers.ToArray();
 
         UnityTransport transport = (UnityTransport)m_NetworkManager.NetworkConfig.NetworkTransport;

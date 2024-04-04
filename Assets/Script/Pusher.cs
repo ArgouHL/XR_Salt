@@ -7,16 +7,16 @@ public class Pusher : MonoBehaviour
    public Vector3 velocity;
     private Rigidbody rig;
     [SerializeField] public float maxVolume;
-    private float volume;
-
+    [SerializeField] private float volume;
+    private Vector3 frontVector;
     private void Awake()
     {
-        rig = GetComponent<Rigidbody>();
+        rig = GetComponentInParent<Rigidbody>();
     }
 
     public void Update()
     {
-        Vector3 frontVector = -transform.up;
+        frontVector = -transform.up;
         Vector3 _frontVector = -transform.up;
         frontVector.y = 0;
        // frontVector = frontVector.normalized;
@@ -26,17 +26,33 @@ public class Pusher : MonoBehaviour
         Debug.DrawRay(transform.position, _frontVector, Color.green);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if(other.CompareTag("cell"))
+        if (other.CompareTag("cell"))
         {
             ColliderCell cell = other.GetComponent<ColliderCell>();
-            float v=volume+cell.Digged();
+            if (!cell.CanPush())
+                return;
+            Debug.Log(Vector3.Angle(rig.velocity.normalized, frontVector));
+            if (rig.velocity.magnitude <= 0 || Vector3.Angle(rig.velocity.normalized, frontVector) > 60)
+                return;
+            float v=volume+cell.Digged();           
             volume = v < maxVolume?v: maxVolume;
         }
-        if (other.CompareTag("SaltMountion"))
-        {
+        //if (other.CompareTag("SaltMountion"))
+        //{
           
+        //}
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("SaltMount"))
+        {
+            if (!(volume > 0))
+                return;
+            other.GetComponent<SaltMount>().AddVolume(volume);
+            volume = 0;
         }
     }
 
