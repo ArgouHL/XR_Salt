@@ -97,7 +97,7 @@ public class ExampleNetworkDiscoveryHud : MonoBehaviour
                     transport.SetConnectionData(discoveredServer.Key.ToString(), discoveredServer.Value.Port);
                     
                     NetworkManager.Singleton.StartClient();
-                    NetWorkUI.instance.HideUI("Client");
+                   // NetWorkUI.instance.HideUI("Client");
                     Debug.Log("Join" + discoveredServer.Key.ToString() +";"+ discoveredServer.Value.Port);
 
                 }

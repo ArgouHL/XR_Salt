@@ -22,12 +22,12 @@ public class NetWorkUIVR : NetWorkUI
 
         clientBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.JoinRelay();
+            NetworkLink.instance.JoinRelay();
         });
 
         lanclientBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.JoinLan();
+            NetworkLink.instance.JoinLan();
         });
 
         

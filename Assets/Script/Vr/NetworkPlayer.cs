@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkPlayer : NetworkBehaviour
@@ -14,17 +15,45 @@ public class NetworkPlayer : NetworkBehaviour
 
     private Renderer[] meshs;
     [SerializeField] private Collider[] colliders;
+    [SerializeField] private NameFaceCamera nameShow;
 
+    private NetworkVariable<int> charaDataIndex = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public static NetworkPlayer ownPlayer;
+
+    private delegate void UpdateAction();
+    private UpdateAction OnUpdate;
+
+    private void OnDisable()
+    {
+        if(IsOwner)
+        {
+            OnUpdate -= UpdateTransform;
+        }
+    }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        if (IsServer)
+        {
+            charaDataIndex.Value = -1;
+            HidePlayer();
+        }
+        else
+        {
+            SetChara(0, charaDataIndex.Value);
+        }
+
+
         if (IsOwner)
         {
-            DisableMeshs();
+
             Debug.Log(OwnerClientId);
             vrRig.SetNetworkPlayer(this);
-            
+            OnUpdate += UpdateTransform;
+            //charaDataIndex.Value = PlayerDataContainer.charaDataIndex;
+            ownPlayer = this;
+            // CharaChangeServerRpc();
 
 
         }
@@ -32,6 +61,33 @@ public class NetworkPlayer : NetworkBehaviour
         {
             EnableCollider();
         }
+
+        charaDataIndex.OnValueChanged += SetChara;
+
+        //SetChara();
+    }
+
+
+
+    private void HidePlayer()
+    {
+        nameShow.ChangeName("");
+
+        meshs = GetComponentsInChildren<Renderer>();
+        foreach (var m in meshs)
+        {
+            m.enabled = false;
+        }
+
+    }
+
+    public void SetCharaData(int charaDataIndex)
+    {
+        CharaChangeServerRpc(charaDataIndex);
+        //charaDataIndex.Value = charaDataIndex;
+
+        //var charaData=CharaDatas.GetCharaData(charaDataIndex);
+        //SetChara();
 
     }
 
@@ -43,21 +99,22 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
-    private void DisableMeshs()
-    {
-        meshs = GetComponentsInChildren<Renderer>();
-        foreach (var m in meshs)
-        {
-            m.enabled = false;
-        }
-    }
+    //private void HideChara()
+    //{
+    //    meshs = GetComponentsInChildren<Renderer>();
+    //    foreach (var m in meshs)
+    //    {
+    //        m.enabled = false;
+    //    }
+    //}
 
     private void Update()
     {
-        if (!IsOwner)
-            return;
-        UpdateTransform();
+        OnUpdate?.Invoke();
     }
+
+
+
 
     private void UpdateTransform()
     {
@@ -99,12 +156,12 @@ public class NetworkPlayer : NetworkBehaviour
         Debug.Log("test");
         if (networkObjectRef.TryGet(out NetworkObject networkObject))
         {
-           // networkObject.SynchronizeTransform = false;
-           // networkObject.RemoveOwnership();
-          
-           // networkObject.transform.GetComponent<Rigidbody>().velocity = velocity;
-         //   Debug.Log("Owner back server");
-          //  EnableTranformSyncClientRpc(networkObjectRef);
+            // networkObject.SynchronizeTransform = false;
+            // networkObject.RemoveOwnership();
+
+            // networkObject.transform.GetComponent<Rigidbody>().velocity = velocity;
+            //   Debug.Log("Owner back server");
+            //  EnableTranformSyncClientRpc(networkObjectRef);
 
 
 
@@ -116,6 +173,48 @@ public class NetworkPlayer : NetworkBehaviour
 
     }
 
+    [ServerRpc]
+    public void CharaChangeServerRpc(int _charaDataIndex)
+    {
+        charaDataIndex.Value = _charaDataIndex;
+        // SetChara();
 
-   
+    }
+
+    private void SetChara(int previousValue, int newValue)
+    {
+        if (newValue < 0)
+        {
+            HidePlayer();
+            return;
+        }
+
+        var data = CharaDatas.GetCharaData(newValue);
+        //TurnONChara
+        SetCharaSkin(data.charaSkinColor);
+        nameShow.ChangeName(data.charaterName);
+
+    }
+
+    private void SetCharaSkin(Color charaSkinColor)
+    {
+        meshs = GetComponentsInChildren<Renderer>();
+        foreach (var m in meshs)
+        {
+            m.enabled = true;
+            m.material.color = charaSkinColor;
+        }
+    }
+
+    [ServerRpc]
+    private void AddCheckCameraServerRpc()
+    {
+        CameraControl.instance.AddPlayer(head);
+    }
+
+    [ServerRpc]
+    private void RemoveCheckCameraServerRpc()
+    {
+        CameraControl.instance.RemovePlayer(head);
+    }
 }

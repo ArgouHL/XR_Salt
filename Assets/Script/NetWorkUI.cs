@@ -40,28 +40,28 @@ public class NetWorkUI : MonoBehaviour
 
         relayServerBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.CreateServerRelay();
+            NetworkLink.instance.CreateServerRelay();
         });
 
         lanServerBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.CreateLanServer();
+            NetworkLink.instance.CreateLanServer();
         });
 
         relayHostBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.CreateHost();
+            NetworkLink.instance.CreateHost();
         });
 
 
         clientBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.JoinRelay();
+            NetworkLink.instance.JoinRelay();
         });
 
         lanclientBtn.onClick.AddListener(() =>
         {
-            RelayLink.instance.JoinLan();
+            NetworkLink.instance.JoinLan();
         });
 
 

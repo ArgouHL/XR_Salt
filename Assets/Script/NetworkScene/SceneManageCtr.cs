@@ -1,3 +1,4 @@
+using IngameDebugConsole;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,20 +9,24 @@ using UnityEngine.SceneManagement;
 
 public class SceneManageCtr : NetworkBehaviour
 {
-    public static SceneManageCtr intance;
+    public static SceneManageCtr instance;
 
     private void Awake()
     {
-        if (intance != null)
+        if (instance != null)
         {
             Destroy(gameObject);
             return;
         }
         DontDestroyOnLoad(gameObject);
-        intance = this;
+        instance = this;
 
     }
 
+    private void Start()
+    {
+        DebugLogConsole.AddCommandInstance("ChangeScene2", "ChangeScene2", "ChangeScene2", this);
+    }
 
 
 #if UNITY_EDITOR
@@ -47,31 +52,52 @@ public class SceneManageCtr : NetworkBehaviour
     }
 #endif
 
-    private string m_Scene1Name;
-    private string m_Scene2Name;
-    private string vrStartSceneName;
+    public string m_Scene1Name;
+    public string m_Scene2Name;
+    public string vrStartSceneName;
 
     public override void OnNetworkSpawn()
     {
         if (IsServer && !string.IsNullOrEmpty(m_Scene1Name))
         {
-            var status = NetworkManager.SceneManager.LoadScene(m_Scene1Name, LoadSceneMode.Additive);
+            var status = NetworkManager.SceneManager.LoadScene(vrStartSceneName, LoadSceneMode.Additive);
             if (status != SceneEventProgressStatus.Started)
             {
                 Debug.LogWarning($"Failed to load {m_Scene1Name} " +
                       $"with a {nameof(SceneEventProgressStatus)}: {status}");
             }
+            Debug.Log("StartS");
         }
-        else if (!string.IsNullOrEmpty(vrStartSceneName))
+        else if (IsServer)
+            Debug.Log("StartNot");
+    }
+
+    internal void VrStart()
+    {
+        if (!string.IsNullOrEmpty(vrStartSceneName))
         {
-            var status = NetworkManager.SceneManager.LoadScene(vrStartSceneName, LoadSceneMode.Additive);
-            if (status != SceneEventProgressStatus.Started)
-            {
-                Debug.LogWarning($"Failed to load {vrStartSceneName} " +
-                      $"with a {nameof(SceneEventProgressStatus)}: {status}");
-            }
+            SceneManager.LoadSceneAsync(vrStartSceneName, LoadSceneMode.Additive);
+
         }
     }
+
+
+
+    internal void JoinSlatLobby()
+    {
+        StartCoroutine(JoinLobbyIE());
+    }
+
+
+
+    private IEnumerator JoinLobbyIE()
+    {
+        yield return SceneManager.UnloadSceneAsync(vrStartSceneName);  
+        yield return SceneManager.LoadSceneAsync(m_Scene1Name, LoadSceneMode.Additive);        
+        NetworkLink.instance.JoinLan();
+    }
+
+
 
     [ContextMenu("ChangeScene1")]
     public void ChangeScene1()
@@ -86,6 +112,7 @@ public class SceneManageCtr : NetworkBehaviour
         DisloadScene(m_Scene2Name);
         yield return new WaitForSeconds(0.2f);
         ChangeScene(m_Scene1Name);
+
     }
 
     [ContextMenu("ChangeScene2")]
@@ -98,6 +125,7 @@ public class SceneManageCtr : NetworkBehaviour
     private IEnumerator ChangeScene2IE()
     {
         DisloadScene(m_Scene1Name);
+        UnloadSceneClientRpc(m_Scene1Name);
         yield return new WaitForSeconds(0.2f);
         ChangeScene(m_Scene2Name);
     }
@@ -126,5 +154,9 @@ public class SceneManageCtr : NetworkBehaviour
         NetworkManager.SceneManager.LoadScene(scnenName, LoadSceneMode.Single);
     }
 
-
+    [ClientRpc]
+    private void UnloadSceneClientRpc(string scnenName)
+    {
+       SceneManager.UnloadSceneAsync(scnenName);
+    }
 }

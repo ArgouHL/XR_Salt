@@ -318,4 +318,10 @@ public class Outline : MonoBehaviour {
         outlineFillMaterial.SetFloat("_Active", 0f);
     }
 
+    [ContextMenu("RandomColor")]
+    public void RandomColor()
+    {
+        outlineColor = UnityEngine.Random.ColorHSV();
+        UpdateMaterialProperties();
+    }
 }
