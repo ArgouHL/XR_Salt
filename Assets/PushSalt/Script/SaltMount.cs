@@ -9,7 +9,7 @@ public class SaltMount : MonoBehaviour
     [SerializeField] private Transform mount;
     private void Start()
     {
-        volume = 100;
+        volume = 6;
         UpdateMount();
 
     }

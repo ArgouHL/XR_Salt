@@ -10,7 +10,8 @@ using UnityEngine.SceneManagement;
 public class SceneManageCtr : NetworkBehaviour
 {
     public static SceneManageCtr instance;
-
+    public Vector2 DrawOffset = new Vector2(300, 10);
+    private string nowSceneName;
     private void Awake()
     {
         if (instance != null)
@@ -25,19 +26,20 @@ public class SceneManageCtr : NetworkBehaviour
 
     private void Start()
     {
-        DebugLogConsole.AddCommandInstance("ChangeScene2", "ChangeScene2", "ChangeScene2", this);
+
     }
 
 
 #if UNITY_EDITOR
-    public UnityEditor.SceneAsset SceneAsset1;
+    public UnityEditor.SceneAsset Playscene;
     public UnityEditor.SceneAsset SceneAsset2;
     public UnityEditor.SceneAsset vrStartScene;
+    public UnityEditor.SceneAsset craftRoom;
     private void OnValidate()
     {
-        if (SceneAsset1 != null)
+        if (Playscene != null)
         {
-            m_Scene1Name = SceneAsset1.name;
+            m_Playscene = Playscene.name;
         }
 
         if (SceneAsset2 != null)
@@ -49,114 +51,125 @@ public class SceneManageCtr : NetworkBehaviour
         {
             vrStartSceneName = vrStartScene.name;
         }
+
+        if (craftRoom != null)
+        {
+            craftRoomName = craftRoom.name;
+        }
     }
 #endif
 
-    public string m_Scene1Name;
+    public string m_Playscene;
     public string m_Scene2Name;
     public string vrStartSceneName;
+    public string craftRoomName;
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer && !string.IsNullOrEmpty(m_Scene1Name))
+        if (IsServer && !string.IsNullOrEmpty(vrStartSceneName))
         {
-            var status = NetworkManager.SceneManager.LoadScene(vrStartSceneName, LoadSceneMode.Additive);
+            var status = LoadStartScene(vrStartSceneName);
+
             if (status != SceneEventProgressStatus.Started)
             {
-                Debug.LogWarning($"Failed to load {m_Scene1Name} " +
+                Debug.LogWarning($"Failed to load {vrStartSceneName} " +
                       $"with a {nameof(SceneEventProgressStatus)}: {status}");
             }
+
             Debug.Log("StartS");
         }
         else if (IsServer)
             Debug.Log("StartNot");
     }
 
-    internal void VrStart()
-    {
-        if (!string.IsNullOrEmpty(vrStartSceneName))
-        {
-            SceneManager.LoadSceneAsync(vrStartSceneName, LoadSceneMode.Additive);
+    //internal void VrStart()
+    //{
+    //    if (!string.IsNullOrEmpty(vrStartSceneName))
+    //    {
+    //        SceneManager.LoadSceneAsync(vrStartSceneName, LoadSceneMode.Additive);
 
-        }
-    }
+    //    }
+    //    if (!string.IsNullOrEmpty(craftRoomName))
+    //    {
+    //        SceneManager.LoadSceneAsync(craftRoomName, LoadSceneMode.Additive);
 
-
-
-    internal void JoinSlatLobby()
-    {
-        StartCoroutine(JoinLobbyIE());
-    }
+    //    }
+    //}
 
 
 
-    private IEnumerator JoinLobbyIE()
-    {
-        yield return SceneManager.UnloadSceneAsync(vrStartSceneName);  
-        yield return SceneManager.LoadSceneAsync(m_Scene1Name, LoadSceneMode.Additive);        
-        NetworkLink.instance.JoinLan();
-    }
+    //internal void JoinSlatLobby()
+    //{
+    //    StartCoroutine(JoinLobbyIE());
+    //}
 
 
 
-    [ContextMenu("ChangeScene1")]
-    public void ChangeScene1()
-    {
-        StartCoroutine(ChangeScene1IE());
-
-    }
-
-
-    private IEnumerator ChangeScene1IE()
-    {
-        DisloadScene(m_Scene2Name);
-        yield return new WaitForSeconds(0.2f);
-        ChangeScene(m_Scene1Name);
-
-    }
-
-    [ContextMenu("ChangeScene2")]
-    public void ChangeScene2()
-    {
-
-        StartCoroutine(ChangeScene2IE());
-
-    }
-    private IEnumerator ChangeScene2IE()
-    {
-        DisloadScene(m_Scene1Name);
-        UnloadSceneClientRpc(m_Scene1Name);
-        yield return new WaitForSeconds(0.2f);
-        ChangeScene(m_Scene2Name);
-    }
-
-
-    private void DisloadScene(string scnenName)
-    {
-        if (!IsServer)
-            return;
-        NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(scnenName));
-    }
+    //private IEnumerator JoinLobbyIE()
+    //{
+    //    yield return SceneManager.UnloadSceneAsync(vrStartSceneName);  
+    //    yield return SceneManager.LoadSceneAsync(m_Scene1Name, LoadSceneMode.Additive);        
+    //    NetworkLink.instance.JoinLan();
+    //}
 
     private void ChangeScene(string scnenName)
     {
         if (!IsServer)
             return;
+        if (nowSceneName == null)
+            return;
+        NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(nowSceneName));
+        nowSceneName = scnenName;
+        NetworkManager.SceneManager.OnUnloadEventCompleted += LoadScene;
 
-        NetworkManager.SceneManager.LoadScene(scnenName, LoadSceneMode.Additive);
+    }
+
+    private void LoadScene(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+
+        NetworkManager.SceneManager.LoadScene(nowSceneName, LoadSceneMode.Additive);
+
+    }
+
+    private SceneEventProgressStatus LoadStartScene(string scnenName)
+    {
+        if (!IsServer)
+        {
+            return SceneEventProgressStatus.None;
+        }
+
+        nowSceneName = scnenName;
+        return NetworkManager.SceneManager.LoadScene(scnenName, LoadSceneMode.Additive);
 
         //  ChangeSceneClientRpc(scnenName);
     }
 
-    [ClientRpc]
-    private void ChangeSceneClientRpc(string scnenName)
-    {
-        NetworkManager.SceneManager.LoadScene(scnenName, LoadSceneMode.Single);
-    }
 
-    [ClientRpc]
-    private void UnloadSceneClientRpc(string scnenName)
+
+
+    void OnGUI()
     {
-       SceneManager.UnloadSceneAsync(scnenName);
+        if (!IsServer)
+            return;
+#if UNITY_ANDROID && !UNITY_EDITOR
+        return;
+#endif
+
+        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(100, 50)));
+        if (GUILayout.Button("SelectScnen"))
+        {
+            ChangeScene(vrStartSceneName);
+        }
+        if (GUILayout.Button("Playscene"))
+        {
+            ChangeScene(m_Playscene);
+        }
+
+
+
+
+
+        GUILayout.EndArea();
+
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class NetworkPlayer : NetworkBehaviour
 {
@@ -18,6 +19,9 @@ public class NetworkPlayer : NetworkBehaviour
     [SerializeField] private NameFaceCamera nameShow;
 
     private NetworkVariable<int> charaDataIndex = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    
+
     public static NetworkPlayer ownPlayer;
 
     private delegate void UpdateAction();
@@ -33,6 +37,9 @@ public class NetworkPlayer : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+      
+        NetworkManager.OnClientConnectedCallback += AddPlayerCam;
+       
         base.OnNetworkSpawn();
         if (IsServer)
         {
@@ -51,6 +58,7 @@ public class NetworkPlayer : NetworkBehaviour
             Debug.Log(OwnerClientId);
             vrRig.SetNetworkPlayer(this);
             OnUpdate += UpdateTransform;
+            
             //charaDataIndex.Value = PlayerDataContainer.charaDataIndex;
             ownPlayer = this;
             // CharaChangeServerRpc();
@@ -206,15 +214,32 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
+
+    internal void AddPlayerCam(ulong player)
+    {
+        if (!IsOwner)
+            return;
+        AddCheckCameraServerRpc();
+    }
+
+  
+
+
     [ServerRpc]
     private void AddCheckCameraServerRpc()
     {
-        CameraControl.instance.AddPlayer(head);
+        CameraControl.instance.AddPlayer((int)OwnerClientId,head);
     }
 
-    [ServerRpc]
-    private void RemoveCheckCameraServerRpc()
+   
+
+    internal void Tele(Transform targetTransform)
     {
-        CameraControl.instance.RemovePlayer(head);
+       TeleportRequest teleportRequest = new TeleportRequest();
+
+        teleportRequest.destinationPosition = targetTransform.position;
+        teleportRequest.destinationRotation = targetTransform.rotation;
+        FindObjectOfType<TeleportationProvider>().QueueTeleportRequest(teleportRequest);
+        ////VRCtr.instance.Teleport(targetTransform);
     }
 }

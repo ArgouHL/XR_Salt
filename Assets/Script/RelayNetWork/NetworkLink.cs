@@ -69,8 +69,10 @@ public class NetworkLink : MonoBehaviour
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         //GetIP();
-
+      
     }
+
+ 
 
     private void GetIP()
     {
@@ -379,7 +381,7 @@ public class NetworkLink : MonoBehaviour
         {
             Debug.Log(discoveredServers.Count);
             OnServerNotFound();
-            await Task.Delay(20);
+            await Task.Delay(500);
 
 
         }
@@ -410,4 +412,7 @@ public class NetworkLink : MonoBehaviour
         discoveredServers.Clear();
         m_Discovery.TaskClientBroadcast(new DiscoveryBroadcastData());
     }
+
+
+   
 }

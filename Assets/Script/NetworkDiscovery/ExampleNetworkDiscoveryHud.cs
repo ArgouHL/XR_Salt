@@ -51,7 +51,7 @@ public class ExampleNetworkDiscoveryHud : MonoBehaviour
 #if UNITY_ANDROID &&!UNITY_EDITOR
         return;
 #endif
-        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(600, 1000)));
+        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(400, 600)));
 
         if (m_NetworkManager.IsServer || m_NetworkManager.IsClient)
         {
