@@ -14,18 +14,12 @@ public class CharatarSelectEventer : NetworkBehaviour
     public CharaterObj charaSet;
     public TMP_Text nameText;
     public GameObject CharaObj;
-    private NetworkVariable<bool> chooseable = new NetworkVariable<bool>();
+    private NetworkVariable<bool> chooseable = new NetworkVariable<bool>(true);
 
-    
+
 
     private void Start()
     {
-        
-       
-        if (IsServer)
-        {
-            chooseable.Value = true;
-        }
         if (!chooseable.Value)
         {
             Unshow();
@@ -36,11 +30,13 @@ public class CharatarSelectEventer : NetworkBehaviour
         var meshs = GetComponentsInChildren<Renderer>();
         foreach (var m in meshs)
         {
-         
+
             m.material.color = charaSet.charaterData.charaSkinColor;
         }
 
-        DebugLogConsole.AddCommandInstance("CharaChoosed"+ charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
+        DebugLogConsole.AddCommandInstance("CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
+
+      
     }
 
     private void OnEnable()
@@ -93,35 +89,39 @@ public class CharatarSelectEventer : NetworkBehaviour
 
     public void CharaChoosed()
     {
-        CharaChoosedServerRpc(OwnerClientId);
+        nameText.text = "choosed";
+        if (IsServer)
+            GetComponentInChildren<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV();
+        CharaChoosedServerRpc(NetworkPlayer.ownPlayer.OwnerClientId);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]   
     private void CharaChoosedServerRpc(ulong clientId)
     {
         if (!chooseable.Value)
             return;
-        if (!IsServer) return;
+
         Unshow();
-        chooseable.Value = false;
-        ClientRpcParams clientRpcParams = new ClientRpcParams
-        {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = new ulong[] { clientId }
-            }
-        };
-        SetCharaClientRpc(clientRpcParams);
+        chooseable.Value = false;       
+        UnshowClientRpc();
+        SetChara(clientId, charaSet.charaterData.charaterIndex);
+    }
+
+    private void SetChara(ulong clientId, int charaterIndex)
+    {
+        NetworkPlayer player= AllPlayerControl.instance.GetPlayer(clientId);
+        player.CharaChange(charaterIndex);
     }
 
     [ClientRpc]
-    private void SetCharaClientRpc(ClientRpcParams clientRpcParams = default)
+    private void UnshowClientRpc()
     {
         Unshow();
-        if (!IsOwner) return;        
-        PlayerDataContainer.SetData(charaSet.charaterData.charaterIndex);
-        NetworkPlayer.ownPlayer.SetCharaData(PlayerDataContainer.charaDataIndex);
-        //SceneManageCtr.instance.JoinSlatLobby();
+        //if (NetworkPlayer.ownPlayer.OwnerClientId != clientID)
+        //    return;
+        //PlayerDataContainer.SetData(charaSet.charaterData.charaterIndex);
+        //NetworkPlayer.ownPlayer.SetCharaData(PlayerDataContainer.charaDataIndex);
+
     }
 
 }

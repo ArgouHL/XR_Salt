@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pusher : MonoBehaviour
 {
-   public Vector3 velocity;
+    public Vector3 velocity;
     private Rigidbody rig;
     [SerializeField] public float maxVolume;
     [SerializeField] private float volume;
@@ -19,9 +19,9 @@ public class Pusher : MonoBehaviour
         frontVector = -transform.up;
         Vector3 _frontVector = -transform.up;
         frontVector.y = 0;
-       // frontVector = frontVector.normalized;
+        // frontVector = frontVector.normalized;
         velocity = rig.velocity;
-        
+
         Debug.DrawRay(transform.position, frontVector, Color.blue);
         Debug.DrawRay(transform.position, _frontVector, Color.green);
     }
@@ -30,29 +30,33 @@ public class Pusher : MonoBehaviour
     {
         if (other.CompareTag("cell"))
         {
-            ColliderCell cell = other.GetComponent<ColliderCell>();
+            if (!TryGetComponent<ColliderCell>(out ColliderCell cell))
+
+                return;
+
+            cell = other.GetComponent<ColliderCell>();
             if (!cell.CanPush())
                 return;
             Debug.Log(Vector3.Angle(rig.velocity.normalized, frontVector));
             if (rig.velocity.magnitude <= 0 || Vector3.Angle(rig.velocity.normalized, frontVector) > 60)
                 return;
-            float v=volume+cell.Digged();           
-            volume = v < maxVolume?v: maxVolume;
+            float v = volume + cell.Digged();
+            volume = v < maxVolume ? v : maxVolume;
         }
-        //if (other.CompareTag("SaltMountion"))
-        //{
-          
-        //}
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("SaltMount"))
+        if (other.CompareTag("SaltMount"))
         {
-            if (!(volume > 0))
-                return;
-            other.GetComponent<SaltMount>().AddVolume(volume);
-            volume = 0;
+            if (TryGetComponent<SaltMount>(out SaltMount saltMount))
+            {
+                if (!(volume > 0))
+                    return;
+                saltMount.AddVolume(volume);
+                volume = 0;
+            }
         }
     }
 

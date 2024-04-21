@@ -118,6 +118,7 @@ public class SceneManageCtr : NetworkBehaviour
             return;
         if (nowSceneName == null)
             return;
+        ForceDeseletAllClientRpc();
         NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(nowSceneName));
         nowSceneName = scnenName;
         NetworkManager.SceneManager.OnUnloadEventCompleted += LoadScene;
@@ -171,5 +172,13 @@ public class SceneManageCtr : NetworkBehaviour
 
         GUILayout.EndArea();
 
+    }
+
+   
+    [ClientRpc]
+    [ContextMenu("deselect")]
+    private void ForceDeseletAllClientRpc()
+    {
+        NetworkPlayer.ownPlayer.DeselectAll();
     }
 }

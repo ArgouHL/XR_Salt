@@ -12,6 +12,9 @@ public class NetworkPlayer : NetworkBehaviour
     [SerializeField] private Transform head;
     [SerializeField] private Transform leftHand;
     [SerializeField] private Transform rightHand;
+
+ 
+
     private VRRigReferences vrRig => VRRigReferences.instance;
 
     private Renderer[] meshs;
@@ -19,8 +22,8 @@ public class NetworkPlayer : NetworkBehaviour
     [SerializeField] private NameFaceCamera nameShow;
 
     private NetworkVariable<int> charaDataIndex = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<bool> selected = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    
 
     public static NetworkPlayer ownPlayer;
 
@@ -29,7 +32,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void OnDisable()
     {
-        if(IsOwner)
+        if (IsOwner)
         {
             OnUpdate -= UpdateTransform;
         }
@@ -37,19 +40,19 @@ public class NetworkPlayer : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-      
+
         NetworkManager.OnClientConnectedCallback += AddPlayerCam;
-       
+
         base.OnNetworkSpawn();
         if (IsServer)
         {
             charaDataIndex.Value = -1;
-            HidePlayer();
+            selected.Value = false;
+
         }
-        else
-        {
-            SetChara(0, charaDataIndex.Value);
-        }
+
+        SetChara(0, charaDataIndex.Value);
+
 
 
         if (IsOwner)
@@ -58,20 +61,19 @@ public class NetworkPlayer : NetworkBehaviour
             Debug.Log(OwnerClientId);
             vrRig.SetNetworkPlayer(this);
             OnUpdate += UpdateTransform;
-            
+
             //charaDataIndex.Value = PlayerDataContainer.charaDataIndex;
             ownPlayer = this;
             // CharaChangeServerRpc();
-
+            Tele(new Vector3(0, 0, -3));
 
         }
         else
         {
-            EnableCollider();
+            //  EnableCollider();
         }
 
         charaDataIndex.OnValueChanged += SetChara;
-
         //SetChara();
     }
 
@@ -88,16 +90,33 @@ public class NetworkPlayer : NetworkBehaviour
         }
 
     }
-
-    public void SetCharaData(int charaDataIndex)
+    private void ShowPlayer(int newValue)
     {
-        CharaChangeServerRpc(charaDataIndex);
-        //charaDataIndex.Value = charaDataIndex;
+        var data = CharaDatas.GetCharaData(newValue);
+        //TurnONChara
+        SetCharaSkin(data.charaSkinColor);
+        nameShow.ChangeName(data.charaterName);
 
-        //var charaData=CharaDatas.GetCharaData(charaDataIndex);
-        //SetChara();
-
+        meshs = GetComponentsInChildren<Renderer>();
+        foreach (var m in meshs)
+        {
+            m.enabled = true;
+        }
+        if (IsOwner)
+        {
+            vrRig.UnShow();
+        }
     }
+
+    //public void SetCharaData(int charaDataIndex)
+    //{
+    //    CharaChangeServerRpc(charaDataIndex);
+    //    //charaDataIndex.Value = charaDataIndex;
+
+    //    //var charaData=CharaDatas.GetCharaData(charaDataIndex);
+    //    //SetChara();
+
+    //}
 
     private void EnableCollider()
     {
@@ -135,6 +154,7 @@ public class NetworkPlayer : NetworkBehaviour
         rightHand.position = vrRig.rightHand.position;
         rightHand.rotation = vrRig.rightHand.rotation;
     }
+
 
 
 
@@ -181,13 +201,14 @@ public class NetworkPlayer : NetworkBehaviour
 
     }
 
-    [ServerRpc]
-    public void CharaChangeServerRpc(int _charaDataIndex)
+
+    internal void CharaChange(int _charaDataIndex)
     {
         charaDataIndex.Value = _charaDataIndex;
-        // SetChara();
+        selected.Value = true;
 
     }
+
 
     private void SetChara(int previousValue, int newValue)
     {
@@ -197,10 +218,7 @@ public class NetworkPlayer : NetworkBehaviour
             return;
         }
 
-        var data = CharaDatas.GetCharaData(newValue);
-        //TurnONChara
-        SetCharaSkin(data.charaSkinColor);
-        nameShow.ChangeName(data.charaterName);
+        ShowPlayer(newValue);
 
     }
 
@@ -222,24 +240,48 @@ public class NetworkPlayer : NetworkBehaviour
         AddCheckCameraServerRpc();
     }
 
-  
+
 
 
     [ServerRpc]
     private void AddCheckCameraServerRpc()
     {
-        CameraControl.instance.AddPlayer((int)OwnerClientId,head);
+        AllPlayerControl.instance.AddPlayer(OwnerClientId, this);
     }
 
-   
+
 
     internal void Tele(Transform targetTransform)
     {
-       TeleportRequest teleportRequest = new TeleportRequest();
+        TeleportRequest teleportRequest = new TeleportRequest();
 
         teleportRequest.destinationPosition = targetTransform.position;
         teleportRequest.destinationRotation = targetTransform.rotation;
         FindObjectOfType<TeleportationProvider>().QueueTeleportRequest(teleportRequest);
         ////VRCtr.instance.Teleport(targetTransform);
     }
+
+    internal void Tele(Vector3 targetPosition)
+    {
+        TeleportRequest teleportRequest = new TeleportRequest();
+
+        teleportRequest.destinationPosition = targetPosition;
+        teleportRequest.destinationRotation = transform.rotation;
+        FindObjectOfType<TeleportationProvider>().QueueTeleportRequest(teleportRequest);
+        ////VRCtr.instance.Teleport(targetTransform);
+    }
+
+    internal void ChangeOwnerShip(NetworkObject networkObject)
+    {
+        NetworkObjectReference nf = new NetworkObjectReference(networkObject);
+        RequestOwnershipServerRpc(nf);
+
+    }
+
+    
+    internal void DeselectAll()
+    {
+        VRCtr.instance.ForceDeselect();
+    }
+
 }

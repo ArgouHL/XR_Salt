@@ -1,15 +1,21 @@
+using IngameDebugConsole;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    [SerializeField] private int num;
-    [SerializeField] private GameObject g;
 
     private void Start()
     {
-       for(int i = 0;i<num;i++)
-        Instantiate(g, new Vector3(Random.Range(0, 2f), Random.Range(0,2f), Random.Range(0, 2f)),Quaternion.identity);
+        DebugLogConsole.AddCommandInstance("TestGet", "TestGet", "TestGet", this);
     }
+
+    [ContextMenu("TestGet")]
+    public void TestGet()
+    {
+        NetworkPlayer.ownPlayer.ChangeOwnerShip(GetComponent<NetworkObject>());
+        //GetComponent<NetworkObject>().ChangeOwnership((ulong) 1);
+    }    
 }

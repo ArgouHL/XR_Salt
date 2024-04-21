@@ -1,3 +1,4 @@
+using IngameDebugConsole;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +17,11 @@ public class NetworkObjectInterct : MonoBehaviour
         vrRigRef = GetComponent<VRRigReferences>();
     }
 
+    private void Start()
+    {
+       
+    }
+
     public void OnSelectableGrap(SelectEnterEventArgs ergs)
     {
 
@@ -25,7 +31,7 @@ public class NetworkObjectInterct : MonoBehaviour
         NetworkObject networkObject = ergs.interactableObject.transform.GetComponent<NetworkObject>();
         if (networkObject != null)
         {
-            networkObject.GetComponent<VRSyncCollision>().isBeingGrap = true;
+            //networkObject.GetComponent<VRSyncCollision>().isBeingGrap = true;
             vrRigRef.networkPlayer.RequestOwnershipServerRpc(networkObject);
         }
     }
@@ -37,7 +43,7 @@ public class NetworkObjectInterct : MonoBehaviour
             return;
         if (networkObject.IsOwner)
         {
-            networkObject.GetComponent<VRSyncCollision>().isBeingGrap = false;
+            //networkObject.GetComponent<VRSyncCollision>().isBeingGrap = false;
             //   networkObject.SynchronizeTransform = false;
             vrRigRef.networkPlayer.CancelOwnershipServerRpc(networkObject, networkObject.GetComponent<Rigidbody>().velocity);
         }

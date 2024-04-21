@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4521707601981178569}
   - component: {fileID: 8985963315988474442}
   - component: {fileID: 755436067207139669}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 585315732889342211}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.05, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -49,7 +49,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 585315732889342211}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 2069d746672646a4595caa020569d72b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 296523920987844634}
   - component: {fileID: 5153357699961554595}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TeleGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
   m_Colliders:
-  - {fileID: 0}
+  - {fileID: 755436067207139669}
   m_InteractionLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -374,7 +374,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5538788730625472463}
-  m_Mesh: {fileID: -462981019419857548, guid: 333c567f89e8f1647bb612a3f6382c2d, type: 3}
+  m_Mesh: {fileID: -462981019419857548, guid: dd6616f071c796d40ad1de043aa6f959, type: 3}
 --- !u!23 &5769747183877208857
 MeshRenderer:
   m_ObjectHideFlags: 0
