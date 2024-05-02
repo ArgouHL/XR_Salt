@@ -23,10 +23,10 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0.36
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubtractiveShadowColor: {r: 0.9150943, g: 0.8861718, b: 0.7381185, a: 1}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 133347283e115d147a5fcce7f47a538f, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.38810045, g: 0.7278148, b: 0.7324987, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1034,7 +1034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &655418503
 Light:
   m_ObjectHideFlags: 0
@@ -1046,8 +1046,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.5
+  m_Color: {r: 1, g: 0.9287414, b: 0.8726415, a: 1}
+  m_Intensity: 1.06
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1835,7 +1835,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4753299952003389914, guid: d45e7532d7ba98a42aee599ae203041d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 4753299952003389914, guid: d45e7532d7ba98a42aee599ae203041d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1912,7 +1912,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 175799325748118371, guid: da3ff0c4974913644914e3b631f8dc9c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 175799325748118371, guid: da3ff0c4974913644914e3b631f8dc9c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3202,7 +3202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7433208845831295353, guid: 59babca9e0ef97b46832e31dbd5b0a54, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 7433208845831295353, guid: 59babca9e0ef97b46832e31dbd5b0a54, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3264,7 +3264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 264368144835023927, guid: daa022fa774d11a4e81dc90a380a35f8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 264368144835023927, guid: daa022fa774d11a4e81dc90a380a35f8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3933,13 +3933,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: SaltMount
       objectReference: {fileID: 0}
+    - target: {fileID: 7349393912419076890, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
+      propertyPath: startVolume
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 9147085302177232768, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9147085302177232768, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.009
       objectReference: {fileID: 0}
     - target: {fileID: 9147085302177232768, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3972,6 +3976,10 @@ PrefabInstance:
     - target: {fileID: 9147085302177232768, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9147085302177232768, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9173895126425326236, guid: 5b558e131ac42c8449b3f66d1030354d, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -4399,7 +4407,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2426212866454140057, guid: 3248514fd34360b42a2169090b7664bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 2426212866454140057, guid: 3248514fd34360b42a2169090b7664bf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4458,7 +4466,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491652847206865}
   realSnow: {fileID: 3839795582990607278}
   fakeSnow: {fileID: 4823095900829747323}
-  saltmount: {fileID: 0}
 --- !u!114 &7273962963030174737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4474,7 +4481,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491653025449129}
   realSnow: {fileID: 3839795582631945942}
   fakeSnow: {fileID: 4823095900454341891}
-  saltmount: {fileID: 0}
 --- !u!114 &7273962963051086127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4490,7 +4496,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491653054835095}
   realSnow: {fileID: 3839795582652959724}
   fakeSnow: {fileID: 4823095900500500541}
-  saltmount: {fileID: 0}
 --- !u!114 &7273962963215002457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4506,7 +4511,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491652136469473}
   realSnow: {fileID: 3839795583621652894}
   fakeSnow: {fileID: 4823095900102232651}
-  saltmount: {fileID: 0}
 --- !u!114 &7273962964193192396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4522,7 +4526,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491652049568116}
   realSnow: {fileID: 3839795583794799371}
   fakeSnow: {fileID: 4823095899493140702}
-  saltmount: {fileID: 0}
 --- !u!114 &7273962964324942259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4538,7 +4541,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491651094685963}
   realSnow: {fileID: 3839795584727337848}
   fakeSnow: {fileID: 4823095899059396769}
-  saltmount: {fileID: 0}
 --- !u!114 &7273962964372810051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4554,7 +4556,6 @@ MonoBehaviour:
   orgPos: {fileID: 3060491651146990075}
   realSnow: {fileID: 3839795584511714184}
   fakeSnow: {fileID: 4823095899111704657}
-  saltmount: {fileID: 0}
 --- !u!1001 &7510339839320852971
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4630,7 +4631,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1921901704176100057, guid: f5abe337b87d21a468c8b82d5de3b458, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 1921901704176100057, guid: f5abe337b87d21a468c8b82d5de3b458, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4808,7 +4809,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6524400719814137608, guid: bc20b44dc34ea194fb8e8b9e48f93dcf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.189
+      value: -0.008999996
       objectReference: {fileID: 0}
     - target: {fileID: 6524400719814137608, guid: bc20b44dc34ea194fb8e8b9e48f93dcf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4875,7 +4876,6 @@ MonoBehaviour:
   orgPos: {fileID: 3701479967749751093}
   realSnow: {fileID: 3201761535529034570}
   fakeSnow: {fileID: 6613629171114100895}
-  saltmount: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

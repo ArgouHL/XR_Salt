@@ -36,7 +36,7 @@ public class CharatarSelectEventer : NetworkBehaviour
 
         DebugLogConsole.AddCommandInstance("CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
 
-      
+       
     }
 
     private void OnEnable()
@@ -74,9 +74,10 @@ public class CharatarSelectEventer : NetworkBehaviour
         //PlayerDataContainer.SetData(charaSet.charaterData.charaterIndex);
         //SceneManageCtr.instance.JoinSlatLobby();
         CharaChoosed();
+        CharaSelectCtr.instance.AllDisapper();
     }
 
-    private void Unshow()
+    internal void Unshow()
     {
         CharaObj.SetActive(false);
     }

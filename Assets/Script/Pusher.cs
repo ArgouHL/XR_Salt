@@ -9,6 +9,7 @@ public class Pusher : MonoBehaviour
     [SerializeField] public float maxVolume;
     [SerializeField] private float volume;
     private Vector3 frontVector;
+    public bool test = false;
     private void Awake()
     {
         rig = GetComponentInParent<Rigidbody>();
@@ -28,20 +29,23 @@ public class Pusher : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+
         if (other.CompareTag("cell"))
         {
-            if (!TryGetComponent<ColliderCell>(out ColliderCell cell))
-
+            //Debug.Log(other.gameObject.name);
+            if (!other.TryGetComponent<ColliderCell>(out ColliderCell cell))
                 return;
 
-            cell = other.GetComponent<ColliderCell>();
             if (!cell.CanPush())
                 return;
             Debug.Log(Vector3.Angle(rig.velocity.normalized, frontVector));
-            if (rig.velocity.magnitude <= 0 || Vector3.Angle(rig.velocity.normalized, frontVector) > 60)
-                return;
+            
+            if (!test)
+                if (rig.velocity.magnitude <= 0 || Vector3.Angle(rig.velocity.normalized, frontVector) > 60)
+                    return;
             float v = volume + cell.Digged();
             volume = v < maxVolume ? v : maxVolume;
+           
         }
 
     }
@@ -50,7 +54,7 @@ public class Pusher : MonoBehaviour
     {
         if (other.CompareTag("SaltMount"))
         {
-            if (TryGetComponent<SaltMount>(out SaltMount saltMount))
+            if (other.TryGetComponent<SaltMount>(out SaltMount saltMount))
             {
                 if (!(volume > 0))
                     return;

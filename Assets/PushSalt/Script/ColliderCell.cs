@@ -5,8 +5,9 @@ using UnityEngine.VFX;
 
 public class ColliderCell : MonoBehaviour
 {
-    private float volume = 1;
-    private SaltGrid saltGrid;
+    private float volume;
+    private float maxvolume = 1f;
+   // [SerializeField] private SaltGrid saltGrid;
     private Coroutine recoveryCoro;
     private const float recoverySpeed = 0.3f;
     private VisualEffect vfx;
@@ -14,11 +15,13 @@ public class ColliderCell : MonoBehaviour
     private void Awake()
     {
         vfx = GetComponent<VisualEffect>();
-        vfx.SetFloat("height", volume);
+        SetCell();
     }
-    internal void SetCell(SaltGrid _saltGrid)
+    internal void SetCell()
     {
-        saltGrid = _saltGrid;
+       // saltGrid = _saltGrid;
+        volume = maxvolume;
+        vfx.SetFloat("height", volume);
     }
 
     internal bool CanPush()
@@ -29,7 +32,7 @@ public class ColliderCell : MonoBehaviour
     {
         float v = volume;
 
-
+        Debug.Log("Digged");
         if (recoveryCoro != null)
             StopCoroutine(recoveryCoro);
         recoveryCoro = StartCoroutine(RecoveryIE());
@@ -44,7 +47,7 @@ public class ColliderCell : MonoBehaviour
         volume = 0;
         vfx.SetFloat("height", volume);     
         yield return new WaitForSeconds(2);
-        while (volume < 1)
+        while (volume < maxvolume)
         {
 
             volume += Time.deltaTime * recoverySpeed;

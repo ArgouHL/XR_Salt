@@ -80,7 +80,8 @@ public class AllPlayerControl : NetworkBehaviour
             SetCamera(camera.parent);
             return;
         }
-        SetCamera(playersDict[targetPlayer].transform);
+        SetCamera(playersDict[targetPlayer].head.transform);
+        Debug.Log("UpdateCamera");
     }
 
     private void SetCamera(Transform t)
@@ -102,9 +103,10 @@ public class AllPlayerControl : NetworkBehaviour
         {
             Debug.LogError("Player " + id + "camera is existed");
             return;
+
         }
         playersDict.Add(id, networkPlayer);
-
+        Debug.Log("player " + id + " Added");
     }
 
     private void RemovePlayerCam(ulong playerID)

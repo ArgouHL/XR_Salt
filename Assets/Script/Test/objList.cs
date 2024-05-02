@@ -20,7 +20,7 @@ public class objorg
     public Animator ani;
     public GameObject g;
     public Mesh mesh;
-    public Test ts;
+    public RodCtr ts;
 
 
 

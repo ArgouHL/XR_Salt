@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: UseQuaternionSynchronization
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3532432660744242720, guid: ab2bebacbb9b45845a076ce43eba1329, type: 3}
+      propertyPath: test
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3582502917997304349, guid: ab2bebacbb9b45845a076ce43eba1329, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 951099334

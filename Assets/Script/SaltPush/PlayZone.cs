@@ -8,16 +8,23 @@ public class PlayZone : MonoBehaviour
     [SerializeField] private Transform orgPos;
     [SerializeField] private GameObject realSnow;
     [SerializeField] private GameObject fakeSnow;
-    [SerializeField] private SaltMount saltmount;
+    private SaltMount saltMount => GetComponentInChildren<SaltMount>();
 
+ 
 
     internal void SetPlayerable()
     {
         fakeSnow.SetActive(false);
         realSnow.SetActive(true);
-       
-    }  
-    
+
+    }
+
+
+    internal void SetSaltMountOwner(ulong id)
+    {
+        saltMount.SetOwner(id);
+        
+    }
 
     internal Transform GetTransform()
     {

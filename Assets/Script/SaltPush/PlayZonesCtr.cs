@@ -5,7 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class PlayZonesCtr : MonoBehaviour
+public class PlayZonesCtr : NetworkBehaviour
 {
     [SerializeField] private PlayZone[] playZones;
 
@@ -16,21 +16,32 @@ public class PlayZonesCtr : MonoBehaviour
 
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        SetPlayerPosAndZone();
+        
+            SetPlayerPosAndZone();
         //SetPlayZone();
 
     }
 
+    private void SetSaltZone()
+    {
+        for (ulong i = 0; i < 8; i++)
+        {
+            playZones[i].SetSaltMountOwner(i + 1);
+        }
+    }
+
     private void SetPlayerPosAndZone()
     {
+
         if (NetworkPlayer.ownPlayer == null)
             return;
 
-        int id = (int)NetworkPlayer.ownPlayer.OwnerClientId-1;
+        int id = (int)NetworkPlayer.ownPlayer.OwnerClientId - 1;
         NetworkPlayer.ownPlayer.Tele(TargetPos(id));
         playZones[id].SetPlayerable();
+        RequestSaltZoneServerRpc(NetworkPlayer.ownPlayer.OwnerClientId);
     }
 
     //private void SetPlayZone()
@@ -44,11 +55,18 @@ public class PlayZonesCtr : MonoBehaviour
 
     private Transform TargetPos(int id)
     {
-       
+
         return playZones[id].GetTransform();
-       
+
 
 
     }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void RequestSaltZoneServerRpc(ulong id)
+    {
+        playZones[id-1].SetSaltMountOwner(id);
+    }
+
 
 }

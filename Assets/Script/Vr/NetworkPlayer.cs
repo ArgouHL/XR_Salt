@@ -9,7 +9,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class NetworkPlayer : NetworkBehaviour
 {
     [SerializeField] private Transform root;
-    [SerializeField] private Transform head;
+    [SerializeField] internal Transform head;
     [SerializeField] private Transform leftHand;
     [SerializeField] private Transform rightHand;
 
