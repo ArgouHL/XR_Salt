@@ -124,5 +124,13 @@ public class AllPlayerControl : NetworkBehaviour
     {
         return playersDict[clientId];
     }
+
+    internal void HideAllPlayer()
+    {
+        foreach(var np in playersDict)
+        {
+            np.Value.DisapperClientRpc();
+        }
+    }
 }
 

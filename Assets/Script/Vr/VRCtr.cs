@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.XR.CoreUtils;
@@ -9,7 +10,7 @@ public class VRCtr : MonoBehaviour
     public static VRCtr instance;
     public Transform org;
     private XRInteractionManager xRInteractionManager;
-
+    public Material handMaterial;
     public XRBaseInteractor[] interactors;
 
     private void Awake()
@@ -21,8 +22,8 @@ public class VRCtr : MonoBehaviour
     {
         org = FindObjectOfType<XROrigin>().transform;
         xRInteractionManager = GetComponentInChildren<XRInteractionManager>();
-       
-        
+        handMaterial.color = Color.white;
+
         foreach (var interactor in interactors)
         {
             IXRSelectInteractor selectinteractor = interactor;
@@ -49,13 +50,20 @@ public class VRCtr : MonoBehaviour
 
     internal void ForceDeselect()
     {
-        foreach(var interactor in interactors)
+        foreach (var interactor in interactors)
         {
             IXRSelectInteractor selectinteractor = interactor;
             xRInteractionManager.CancelInteractorSelection(selectinteractor);
-        }    
-        
+        }
+
         //GetComponentsInChildren<IXRSelectInteractor>();
         //xRInteractionManager.CancelInteractorSelection(GetComponentsInChildren<XRBaseInteractor>());
+    }
+
+    internal void ChangeColor(int charaterIndex)
+    {
+        Color color = CharaDatas.GetCharaData(charaterIndex).charaSkinColor;
+        handMaterial.color = color;
+
     }
 }

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charaterData:
     charaterIndex: 0
-    charaterName: ABC
+    charaterName: "\u9673\u5927\u6587"
     charaSkinColor: {r: 1, g: 0, b: 0, a: 0}

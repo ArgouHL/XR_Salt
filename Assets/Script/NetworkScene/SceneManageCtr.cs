@@ -35,6 +35,8 @@ public class SceneManageCtr : NetworkBehaviour
     public UnityEditor.SceneAsset SceneAsset2;
     public UnityEditor.SceneAsset vrStartScene;
     public UnityEditor.SceneAsset craftRoom;
+    public UnityEditor.SceneAsset craftRoomEnd;
+    public UnityEditor.SceneAsset endScene;
     private void OnValidate()
     {
         if (Playscene != null)
@@ -49,30 +51,42 @@ public class SceneManageCtr : NetworkBehaviour
 
         if (vrStartScene != null)
         {
-            vrStartSceneName = vrStartScene.name;
+            m_vrStartScene = vrStartScene.name;
         }
 
         if (craftRoom != null)
         {
-            craftRoomName = craftRoom.name;
+            m_craftRoom = craftRoom.name;
+        }
+
+        if (craftRoomEnd != null)
+        {
+            m_craftRoomEnd = craftRoomEnd.name;
+        }
+
+        if (craftRoom != null)
+        {
+            m_endScene = endScene.name;
         }
     }
 #endif
 
     public string m_Playscene;
     public string m_Scene2Name;
-    public string vrStartSceneName;
-    public string craftRoomName;
+    public string m_vrStartScene;
+    public string m_craftRoom;
+    public string m_craftRoomEnd;
+    public string m_endScene;
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer && !string.IsNullOrEmpty(vrStartSceneName))
+        if (IsServer && !string.IsNullOrEmpty(m_vrStartScene))
         {
-            var status = LoadStartScene(vrStartSceneName);
+            var status = LoadStartScene(m_vrStartScene);
 
             if (status != SceneEventProgressStatus.Started)
             {
-                Debug.LogWarning($"Failed to load {vrStartSceneName} " +
+                Debug.LogWarning($"Failed to load {m_vrStartScene} " +
                       $"with a {nameof(SceneEventProgressStatus)}: {status}");
             }
 
@@ -156,16 +170,19 @@ public class SceneManageCtr : NetworkBehaviour
         return;
 #endif
 
-        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(100, 50)));
+        GUILayout.BeginArea(new Rect(DrawOffset, new Vector2(100, 200)));
         if (GUILayout.Button("SelectScnen"))
         {
-            ChangeScene(vrStartSceneName);
+            ChangeScene(m_vrStartScene);
         }
         if (GUILayout.Button("Playscene"))
         {
             ChangeScene(m_Playscene);
         }
-
+        if (GUILayout.Button("EndScene"))
+        {
+            ChangeScene(m_endScene);
+        }
 
 
 
@@ -180,5 +197,15 @@ public class SceneManageCtr : NetworkBehaviour
     private void ForceDeseletAllClientRpc()
     {
         NetworkPlayer.ownPlayer.DeselectAll();
+    }
+
+    public void LoadPlayScene()
+    {
+        ChangeScene(m_Playscene);
+    }
+
+    public void LoadEndScene()
+    {
+        ChangeScene(m_endScene);
     }
 }

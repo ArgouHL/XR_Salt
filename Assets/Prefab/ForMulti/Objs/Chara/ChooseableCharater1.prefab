@@ -59,7 +59,7 @@ PrefabInstance:
     - target: {fileID: 6581336323813708959, guid: e4da45550b3e67d40acd3eeef2d8dafe, type: 3}
       propertyPath: charaSet
       value: 
-      objectReference: {fileID: 11400000, guid: 9ec7397ea2b9fa04c920a0af3986a430, type: 2}
+      objectReference: {fileID: 11400000, guid: 46584c29c8396874685b4da1bb6286d1, type: 2}
     m_RemovedComponents:
     - {fileID: 3899581958430849629, guid: e4da45550b3e67d40acd3eeef2d8dafe, type: 3}
     m_RemovedGameObjects: []

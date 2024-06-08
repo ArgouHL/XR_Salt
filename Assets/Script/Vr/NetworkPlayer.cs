@@ -284,4 +284,18 @@ public class NetworkPlayer : NetworkBehaviour
         VRCtr.instance.ForceDeselect();
     }
 
+
+   
+    internal void Disapper()
+    {
+        gameObject.SetActive(false);
+    }
+
+    [ClientRpc]
+    internal void DisapperClientRpc()
+    {
+        Disapper();
+    }
+
+
 }

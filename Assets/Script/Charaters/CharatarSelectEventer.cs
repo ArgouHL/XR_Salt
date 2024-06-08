@@ -15,7 +15,7 @@ public class CharatarSelectEventer : NetworkBehaviour
     public TMP_Text nameText;
     public GameObject CharaObj;
     private NetworkVariable<bool> chooseable = new NetworkVariable<bool>(true);
-
+    private CharaSelectCtr charaSelect;
 
 
     private void Start()
@@ -35,8 +35,9 @@ public class CharatarSelectEventer : NetworkBehaviour
         }
 
         DebugLogConsole.AddCommandInstance("CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
+        charaSelect = GetComponentInParent<CharaSelectCtr>();
 
-       
+
     }
 
     private void OnEnable()
@@ -73,44 +74,50 @@ public class CharatarSelectEventer : NetworkBehaviour
     {
         //PlayerDataContainer.SetData(charaSet.charaterData.charaterIndex);
         //SceneManageCtr.instance.JoinSlatLobby();
-        CharaChoosed();
         CharaSelectCtr.instance.AllDisapper();
+        CharaChoosed();
+
     }
 
     internal void Unshow()
     {
+        Debug.Log("Unshow");
         CharaObj.SetActive(false);
     }
 
     [ContextMenu("OnTriggered")]
     public void OnTriggered()
     {
+        CharaSelectCtr.instance.AllDisapper();
         CharaChoosed();
     }
 
     public void CharaChoosed()
     {
         nameText.text = "choosed";
-        if (IsServer)
-            GetComponentInChildren<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV();
+        //if (IsServer)
+        //    GetComponentInChildren<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV();
         CharaChoosedServerRpc(NetworkPlayer.ownPlayer.OwnerClientId);
+        VRCtr.instance.ChangeColor(charaSet.charaterData.charaterIndex);
     }
 
-    [ServerRpc(RequireOwnership = false)]   
+    [ServerRpc(RequireOwnership = false)]
     private void CharaChoosedServerRpc(ulong clientId)
     {
         if (!chooseable.Value)
             return;
 
         Unshow();
-        chooseable.Value = false;       
+        chooseable.Value = false;
         UnshowClientRpc();
         SetChara(clientId, charaSet.charaterData.charaterIndex);
+        charaSelect.AddCount();
+
     }
 
     private void SetChara(ulong clientId, int charaterIndex)
     {
-        NetworkPlayer player= AllPlayerControl.instance.GetPlayer(clientId);
+        NetworkPlayer player = AllPlayerControl.instance.GetPlayer(clientId);
         player.CharaChange(charaterIndex);
     }
 
@@ -124,5 +131,7 @@ public class CharatarSelectEventer : NetworkBehaviour
         //NetworkPlayer.ownPlayer.SetCharaData(PlayerDataContainer.charaDataIndex);
 
     }
+
+
 
 }

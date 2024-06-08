@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class VRStart : MonoBehaviour
 {
-   
-    void Start()
+    public GameObject startUI;
+    public void StartJoin()
     {
         NetworkLink.instance.JoinLan();
+        startUI.SetActive(false);
         //SceneManageCtr.instance.VrStart();
     }
 
