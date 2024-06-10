@@ -111,7 +111,7 @@ public class CharatarSelectEventer : NetworkBehaviour
         chooseable.Value = false;
         UnshowClientRpc();
         SetChara(clientId, charaSet.charaterData.charaterIndex);
-        charaSelect.AddCount();
+        charaSelect.AddSelected(clientId, charaSet.charaterData.charaterIndex);
 
     }
 

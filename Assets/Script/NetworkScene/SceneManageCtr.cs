@@ -204,6 +204,11 @@ public class SceneManageCtr : NetworkBehaviour
         ChangeScene(m_Playscene);
     }
 
+    public void LoadEndCraftScene()
+    {
+        ChangeScene(m_craftRoomEnd);
+    }
+
     public void LoadEndScene()
     {
         ChangeScene(m_endScene);

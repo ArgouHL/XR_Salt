@@ -9,11 +9,13 @@ public class CharaSelectCtr : MonoBehaviour
     public  CharatarSelectEventer[] eventers;
     private int selectedCount = 0;
     public int targetCount = 1;
+    public static Dictionary<ulong,int> selectedCharaDict;
     private void Awake()
     {
         instance = this;
         eventers = GetComponentsInChildren<CharatarSelectEventer>();
         selectedCount = 0;
+        selectedCharaDict = new Dictionary<ulong, int>();
     }
 
     internal void AllDisapper()
@@ -25,8 +27,9 @@ public class CharaSelectCtr : MonoBehaviour
         }
     }
 
-    internal void AddCount()
+    internal void AddSelected(ulong id,int charaIndex)
     {
+        selectedCharaDict.Add(id, charaIndex);
         if (selectedCount >= targetCount)
             return;
         selectedCount++;
@@ -35,5 +38,10 @@ public class CharaSelectCtr : MonoBehaviour
             SelectSceneEvent.instance.ChanEvnet();
         }
             
+    }
+
+    internal static int GetCharaIndex(ulong id)
+    {
+        return selectedCharaDict[id];
     }
 }

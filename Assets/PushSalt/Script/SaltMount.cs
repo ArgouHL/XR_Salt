@@ -77,4 +77,14 @@ public class SaltMount : NetworkBehaviour
     {
         GetComponent<NetworkObject>().ChangeOwnership(id);
     }
+
+    internal ulong GetOwner()
+    {
+        return OwnerClientId;
+    }
+
+    internal float GetVolume()
+    {
+        return volume.Value;
+    }
 }

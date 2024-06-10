@@ -18,8 +18,8 @@ public class PlayZonesCtr : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        
-            SetPlayerPosAndZone();
+
+        SetPlayerPosAndZone();
         //SetPlayZone();
 
     }
@@ -44,6 +44,18 @@ public class PlayZonesCtr : NetworkBehaviour
         RequestSaltZoneServerRpc(NetworkPlayer.ownPlayer.OwnerClientId);
     }
 
+    internal List<KeyValuePair<ulong, float>> GetScores()
+    {
+        List<KeyValuePair<ulong, float>> _list = new List<KeyValuePair<ulong, float>>();
+        foreach (var z in playZones)
+        {
+            var s = z.GetComponentInChildren<SaltMount>();
+            _list.Add(new KeyValuePair<ulong, float>(s.GetOwner() , s.GetVolume()));          
+        }
+        return _list;
+
+    }
+
     //private void SetPlayZone()
     //{
     //    if (!IsClient)
@@ -62,11 +74,11 @@ public class PlayZonesCtr : NetworkBehaviour
 
     }
 
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     private void RequestSaltZoneServerRpc(ulong id)
     {
-        playZones[id-1].SetSaltMountOwner(id);
+        playZones[id - 1].SetSaltMountOwner(id);
     }
 
-
+   
 }

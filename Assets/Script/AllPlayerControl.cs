@@ -8,7 +8,8 @@ using UnityEngine.UIElements;
 public class AllPlayerControl : NetworkBehaviour
 {
     public static AllPlayerControl instance;
-    private Transform camera;
+    private Transform nowCamera
+        ;
     private Vector3 cameraOrgPosition;
     private Dictionary<ulong, NetworkPlayer> playersDict = new Dictionary<ulong, NetworkPlayer>();
     public Vector2 DrawOffset = new Vector2(250, 250);
@@ -30,7 +31,7 @@ public class AllPlayerControl : NetworkBehaviour
     }
     private void Start()
     {
-        camera = Camera.main.transform;
+        nowCamera = Camera.main.transform;
         
     }
 
@@ -44,7 +45,7 @@ public class AllPlayerControl : NetworkBehaviour
         if (GUILayout.Button("OrgPoint"))
         {
             OnUpdate = null;
-            SetCamera(camera.parent);
+            SetCamera(nowCamera.parent);
         }
 
         foreach( var pair in playersDict)
@@ -77,7 +78,7 @@ public class AllPlayerControl : NetworkBehaviour
         {
             playersDict.Remove(targetPlayer);
             OnUpdate = null;
-            SetCamera(camera.parent);
+            SetCamera(nowCamera.parent);
             return;
         }
         SetCamera(playersDict[targetPlayer].head.transform);
@@ -86,8 +87,8 @@ public class AllPlayerControl : NetworkBehaviour
 
     private void SetCamera(Transform t)
     {
-        camera.position = t.position;
-        camera.rotation = t.rotation;
+        nowCamera.position = t.position;
+        nowCamera.rotation = t.rotation;
     }
 
 
