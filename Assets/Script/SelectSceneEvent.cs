@@ -14,6 +14,13 @@ public class SelectSceneEvent : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        if(VRStart.instance!=null)
+        {
+            VRStart.instance.HideBlack();
+        }
+    }
     private void OnDisable()
     {
         ChanShowEvent = null;

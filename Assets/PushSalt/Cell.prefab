@@ -68,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39419bf4513ec6b449a20d209a4bb81e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  recoverySpeed: 0.3
 --- !u!2083052967 &2888998376819606926
 VisualEffect:
   m_ObjectHideFlags: 0

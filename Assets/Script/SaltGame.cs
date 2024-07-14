@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class SaltGame : NetworkBehaviour
     public float waitTime = 30;
     public float gameTime = 60;
     private static List<KeyValuePair<ulong,float>> scoreList;
-
+    public TMP_Text hintText;
     private void OnEnable()
     {
         time.OnValueChanged += TimeShow;
@@ -39,6 +40,7 @@ public class SaltGame : NetworkBehaviour
     private IEnumerator CountIE()
     {
         yield return new WaitForSeconds(waitTime);
+        hintText.text = "把鹽盡力推到自己的鹽山";
         while (time.Value > 0)
         {
             time.Value -= Time.deltaTime;
@@ -55,4 +57,6 @@ public class SaltGame : NetworkBehaviour
        //scoreList.OrderByDescending(kvp => kvp.Value).First();
         return scoreList.OrderByDescending(kvp => kvp.Value).First().Key;
     }
+
+
 }

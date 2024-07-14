@@ -7,6 +7,7 @@ public class CharaSelectCtr : MonoBehaviour
 {
     public static CharaSelectCtr instance;
     public  CharatarSelectEventer[] eventers;
+    public GameObject hints;
     private int selectedCount = 0;
     public int targetCount = 1;
     public static Dictionary<ulong,int> selectedCharaDict;
@@ -25,6 +26,7 @@ public class CharaSelectCtr : MonoBehaviour
             eventer.Unshow();
             Debug.Log("s");
         }
+        hints.SetActive(false);
     }
 
     internal void AddSelected(ulong id,int charaIndex)

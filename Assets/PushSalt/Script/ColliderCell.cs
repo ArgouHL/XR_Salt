@@ -9,7 +9,7 @@ public class ColliderCell : MonoBehaviour
     private float maxvolume = 1f;
    // [SerializeField] private SaltGrid saltGrid;
     private Coroutine recoveryCoro;
-    private const float recoverySpeed = 0.3f;
+    public float recoverySpeed = 1f;
     private VisualEffect vfx;
 
     private void Awake()

@@ -16,10 +16,11 @@ public class CharatarSelectEventer : NetworkBehaviour
     public GameObject CharaObj;
     private NetworkVariable<bool> chooseable = new NetworkVariable<bool>(true);
     private CharaSelectCtr charaSelect;
-
+    public Outline outline;
 
     private void Start()
     {
+        outline = GetComponent<Outline>();
         if (!chooseable.Value)
         {
             Unshow();
@@ -42,9 +43,9 @@ public class CharatarSelectEventer : NetworkBehaviour
 
     private void OnEnable()
     {
-        GetComponent<XRSimpleInteractable>().hoverEntered.AddListener((HoverEnterEventArgs ergs) => OnHoverEnter(ergs));
-        GetComponent<XRSimpleInteractable>().hoverExited.AddListener((HoverExitEventArgs ergs) => OnHoverExit(ergs));
-        GetComponent<XRSimpleInteractable>().activated.AddListener((ActivateEventArgs ergs) => OnTriggered(ergs));
+        GetComponentInChildren<XRSimpleInteractable>().hoverEntered.AddListener((HoverEnterEventArgs ergs) => OnHoverEnter(ergs));
+        GetComponentInChildren<XRSimpleInteractable>().hoverExited.AddListener((HoverExitEventArgs ergs) => OnHoverExit(ergs));
+        GetComponentInChildren<XRSimpleInteractable>().activated.AddListener((ActivateEventArgs ergs) => OnTriggered(ergs));
 
 
     }
@@ -53,20 +54,27 @@ public class CharatarSelectEventer : NetworkBehaviour
 
     private void OnDisable()
     {
-        GetComponent<XRSimpleInteractable>().hoverEntered.RemoveListener((HoverEnterEventArgs ergs) => OnHoverEnter(ergs));
-        GetComponent<XRSimpleInteractable>().hoverExited.RemoveListener((HoverExitEventArgs ergs) => OnHoverExit(ergs));
-        GetComponent<XRSimpleInteractable>().activated.RemoveListener((ActivateEventArgs ergs) => OnTriggered(ergs));
+        GetComponentInChildren<XRSimpleInteractable>().hoverEntered.RemoveListener((HoverEnterEventArgs ergs) => OnHoverEnter(ergs));
+        GetComponentInChildren<XRSimpleInteractable>().hoverExited.RemoveListener((HoverExitEventArgs ergs) => OnHoverExit(ergs));
+        GetComponentInChildren<XRSimpleInteractable>().activated.RemoveListener((ActivateEventArgs ergs) => OnTriggered(ergs));
     }
 
     private void OnHoverExit(HoverExitEventArgs ergs)
     {
-        GetComponent<Outline>().DisOutline();
+        outline.DisOutline();
 
     }
 
-    private void OnHoverEnter(HoverEnterEventArgs ergs)
+    [ContextMenu("Enter")]
+    public void OnHoverEnter()
     {
-        GetComponent<Outline>().EnableOutline();
+        OnHoverEnter(new HoverEnterEventArgs());
+    }
+
+
+    public void OnHoverEnter(HoverEnterEventArgs ergs)
+    {
+        outline.EnableOutline();
     }
 
 
