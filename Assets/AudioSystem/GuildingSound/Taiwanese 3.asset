@@ -16,5 +16,5 @@ MonoBehaviour:
   Id: 2
   soundData:
     volume: 0.2
-    duration: 7
+    duration: 10
     clip: {fileID: 8300000, guid: ef2ee6f72ba6efc4e9e4ff8db83b5fa5, type: 3}

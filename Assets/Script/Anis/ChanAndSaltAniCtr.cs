@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEditor;
 
 public class ChanAndSaltAniCtr : NetworkBehaviour
 {
@@ -83,6 +84,7 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
         SelectSceneEvent.instance.ChanShowEvent += AllShow;
     }
 
+    [ContextMenu("Ani")]
     public void AllShow()
     {
         StartCoroutine(GuidingAni());
@@ -91,6 +93,7 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
 
     }
 
+    
     private IEnumerator GuidingAni()
     {
         ChanShow();
