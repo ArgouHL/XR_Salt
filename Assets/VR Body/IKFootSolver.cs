@@ -5,12 +5,13 @@ using UnityEngine;
 public class IKFootSolver : MonoBehaviour
 {
     public bool isMovingForward;
-
+    public bool isMovingBackward;
     [SerializeField] LayerMask terrainLayer = default;
     [SerializeField] Transform body = default;
     [SerializeField] IKFootSolver otherFoot = default;
     [SerializeField] float speed = 4;
     [SerializeField] float stepDistance = .2f;
+    [SerializeField] float backStepDistance = .1f;
     [SerializeField] float stepLength = .2f;
     [SerializeField] float sideStepLength = .1f;
 
@@ -22,18 +23,23 @@ public class IKFootSolver : MonoBehaviour
 
     public float rayStartYOffset = 0;
     public float rayLength = 1.5f;
-    
+
     float footSpacing;
     Vector3 oldPosition, currentPosition, newPosition;
     Vector3 oldNormal, currentNormal, newNormal;
     float lerp;
-
+    private float angle;
+    private bool isMoved = false;
+    private VRrig vRrig;
+    Vector3 oldhitPos;
     private void Start()
     {
         footSpacing = transform.localPosition.x;
+        oldhitPos = body.position;
         currentPosition = newPosition = oldPosition = transform.position;
         currentNormal = newNormal = oldNormal = transform.up;
-        lerp = 1;
+        lerp = 2;
+        vRrig = body.GetComponent<VRrig>();
     }
 
     // Update is called once per frame
@@ -46,31 +52,59 @@ public class IKFootSolver : MonoBehaviour
         Ray ray = new Ray(body.position + (body.right * footSpacing) + Vector3.up * rayStartYOffset, Vector3.down);
 
         Debug.DrawRay(body.position + (body.right * footSpacing) + Vector3.up * rayStartYOffset, Vector3.down);
-            
+
         if (Physics.Raycast(ray, out RaycastHit info, rayLength, terrainLayer.value))
         {
-            if (Vector3.Distance(newPosition, info.point) > stepDistance && !otherFoot.IsMoving() && lerp >= 1)
+
+            float dis = Vector3.Distance(newPosition, info.point);
+
+            if (lerp >= 1 && !otherFoot.IsMoving())
             {
-                lerp = 0;
-                Vector3 direction = Vector3.ProjectOnPlane(info.point - currentPosition,Vector3.up).normalized;
+               // Vector3 direction = Vector3.ProjectOnPlane(info.point - currentPosition, Vector3.up).normalized;
+                Vector3 _dir = info.point - oldhitPos;
+                Debug.DrawRay(body.position + Vector3.up, _dir, Color.green, 0.3f);
+                oldhitPos = info.point;
+                angle = Vector3.Angle(body.forward, _dir);
+                isMovingForward = false;
+                isMovingBackward = false;
+                isMovingForward = angle < 130;
+                isMovingBackward = angle > 50;
 
-                float angle = Vector3.Angle(body.forward, body.InverseTransformDirection(direction));
-
-                isMovingForward = angle < 50 || angle > 130;
-
-                if(isMovingForward)
+                if (dis > backStepDistance && isMovingBackward)
                 {
-                    newPosition = info.point + direction * stepLength + footOffset;
+                    lerp = 0;
+                    newPosition = info.point + _dir * stepLength + Quaternion.LookRotation(body.forward) * footOffset;
+                    newNormal = info.normal;
+                    isMoved = true;
+                }
+                else if (dis > stepDistance)
+                {
+                    lerp = 0;
+                    if (isMovingForward)
+                    {
+                        newPosition = info.point + _dir * stepLength + Quaternion.LookRotation(body.forward) * footOffset;
+                    }
+                    else
+                    {
+                        newPosition = info.point + _dir * sideStepLength + Quaternion.LookRotation(body.forward) * footOffset;
+
+                    }
+                    newNormal = info.normal;
+                    isMoved = true;
+                }
+                else if (isMoved || vRrig.isRotating)
+                {
+                    lerp = 0;
+                    isMoved = false;
+                    newPosition = info.point + Quaternion.LookRotation(body.forward) * footOffset;
                     newNormal = info.normal;
                 }
-                else
-                {
-                    newPosition = info.point + direction * sideStepLength + footOffset;
-                    newNormal = info.normal;
-                }
-
             }
+            
         }
+
+
+
 
         if (lerp < 1)
         {
