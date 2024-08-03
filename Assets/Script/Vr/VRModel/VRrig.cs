@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class VRrig : MonoBehaviour
@@ -9,30 +11,55 @@ public class VRrig : MonoBehaviour
     public VRMap rightHand;
 
     public Transform headConstrain;
-    public Transform neckConstrain;
+    public Transform neckConstrainOffsetedTracker;
+    public Transform spineRotTrack;   
+    public float spineRotFactor = 0.5f;
+    public float spineRotOffeset;
+
+    public Transform neckRotTrack;
+    public float neckRotOffeset;
+
+    private Vector3 orgPos;
     private Vector3 headBodyOffest;
-    //private Vector3 headNeckOffest;
-    //private float neckBodyOffest;
+    private Vector3 headNeckOffest;
+    private Vector3 neckSpineOffest;
+    public Vector3 rotationOffeset;
+    public Vector3 positionOffeset;
+    private float originHeight;
+    public float maxLow;
+
     public bool isRotating = false;
     private bool isMoving = false;
     private float lerp = 1;
     private Vector3 oldPos;
+    public float heightOffset;
+    private Quaternion spineRotation;
+    private Quaternion neckRotation;
+    private LTDescr delayedCallTween;
     // Start is called before the first frame update
     void Start()
     {
+        orgPos = transform.position;
+        originHeight = head.vrTarget.position.y;
         headBodyOffest = headConstrain.position - transform.position;
-        //neckBodyOffest = neckConstrain.position.y - transform.position.y;
-        //headNeckOffest = neckConstrain.position - headConstrain.position;
+        neckSpineOffest = head.vrTarget.position - spineRotTrack.position;
+
+        headNeckOffest = neckConstrainOffsetedTracker.position - headConstrain.position;
+
 
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-       var frontVector = headConstrain.forward;
+        spineRotTrack.localRotation = spineRotation;
+        neckRotTrack.localRotation = neckRotation;
+        var frontVector = head.vrTarget.forward;
+        Debug.DrawRay(transform.position + Vector3.up, frontVector);
         frontVector.y = 0;
         frontVector = frontVector.normalized;
-        Debug.DrawRay(headConstrain.position, frontVector);
+
+        //vrTarget.rotation * Quaternion.Euler(trackingRotationOffset)
         float angle = Vector3.Angle(transform.forward, frontVector.normalized);
 
         if (lerp >= 1)
@@ -41,43 +68,83 @@ public class VRrig : MonoBehaviour
             if (Vector3.Distance(oldPos, transform.position) > 0.5f)
                 isRotating = true;
             oldPos = transform.position;
-            
-        }
 
-        if(angle > 30)
+        }
+        //transform.rotation= Quaternion.LookRotation(frontVector, Vector3.up);
+        if (angle > 35)
         {
             isRotating = true;
+            if (delayedCallTween != null)
+            {
+                LeanTween.cancel(delayedCallTween.id);
+                delayedCallTween = null;
+            }
+             
         }
 
-        if(angle < 5)
+        if (angle < 5)
         {
-            isRotating = false;
+            if (delayedCallTween == null)
+            {
+                delayedCallTween = LeanTween.delayedCall(0.3f, () => isRotating = false);
+
+            }
+
+
         }
-       
+
         if (isRotating)
         {
-            var rot = Quaternion.LookRotation(frontVector, Vector3.up); 
-            transform.rotation = Quaternion.Lerp(transform.rotation, rot, 0.2f);
+            var rot = Quaternion.LookRotation(frontVector, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 540*Time.deltaTime);
         }
 
-        transform.position = headConstrain.position - Quaternion.LookRotation(transform.forward) * headBodyOffest;
-        //transform.position = headConstrain.position+ headConstrain.rotation* headNeckOffest- new Vector3(0,neckBodyOffest,0);
-        Debug.DrawRay(headConstrain.position, headConstrain.rotation.eulerAngles, Color.blue);
+        //Debug.DrawRay(transform.position + Vector3.up, transform.forward, Color.cyan);
+        // transform.position = headConstrain.position -  transform.rotation* headBodyOffest;
+
+        Vector3 offset = head.vrTarget.rotation * Quaternion.Euler(rotationOffeset) * headNeckOffest;
+        offset.y = 0;
+        //transform.position = headConstrain.position - new Vector3(0, headBodyOffest.y, 0);
+        float heightDiff = originHeight - head.vrTarget.position.y;
        
+        float spineAngle = 0;
+        float zDistance = 0;
+        if (heightDiff > maxLow)
+        {
+            float c = neckSpineOffest.y;
+            float a = neckSpineOffest.y - heightDiff + maxLow;
+            spineAngle = Mathf.Acos(a / c) * Mathf.Rad2Deg * spineRotFactor;
+            zDistance = Mathf.Sqrt((c * c) - (a * a)) * spineRotFactor;
+        }
+        
+      
+        Vector3 newPos = head.vrTarget.position -  new Vector3(0, headBodyOffest.y, 0) + offset + transform.rotation * (new Vector3(0, 0, -zDistance)) + head.vrTarget.rotation * positionOffeset;
+       // Vector3 newPos = head.vrTarget.position + _rot * new Vector3(0, headBodyOffest.y, 0) + offset + transform.rotation * (new Vector3(0, 0, -zDistance)) + head.vrTarget.rotation * positionOffeset;
+       
+
+       if(newPos.y - orgPos.y<-maxLow)
+        {
+            newPos.y = -maxLow;
+        }
+        newPos.y += heightOffset;
+        //newPos.y = orgPos.y-newPos.y <= maxLow ? -maxLow : newPos.y;
+
+        spineRotation = Quaternion.Euler(new Vector3(spineAngle + spineRotOffeset, 0, 0));
+        neckRotation = Quaternion.Euler(new Vector3(head.vrTarget.localRotation.eulerAngles.x-spineAngle + neckRotOffeset, 0, 0));
+        transform.position = newPos;
+        
+
+
         head.Map();
         leftHand.Map();
         rightHand.Map();
-
-        if (lerp < 1)
+        
+        if (lerp <= 1)
         {
 
-            lerp += Time.fixedDeltaTime;
+            lerp += Time.deltaTime;
         }
-        else
-        {
-            //oldPosition = newPosition;
-            //oldNormal = newNormal;
-        }
+
 
     }
 
@@ -97,5 +164,16 @@ public class VRMap
     {
         rigTarget.position = vrTarget.TransformPoint(trackingPosOffset);
         rigTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
+
+
     }
+
+    public float RigRotationX()
+    {
+        float _x = rigTarget.localRotation.eulerAngles.x;
+
+        return _x > 180 ? _x : 180 - _x;
+    }
+
+
 }

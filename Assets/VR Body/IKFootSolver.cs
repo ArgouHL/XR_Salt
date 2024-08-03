@@ -28,7 +28,7 @@ public class IKFootSolver : MonoBehaviour
     Vector3 oldPosition, currentPosition, newPosition;
     Vector3 oldNormal, currentNormal, newNormal;
     float lerp;
-    private float angle;
+    public float angle;
     private bool isMoved = false;
     private VRrig vRrig;
     Vector3 oldhitPos;
@@ -57,7 +57,7 @@ public class IKFootSolver : MonoBehaviour
         {
 
             float dis = Vector3.Distance(newPosition, info.point);
-
+            
             if (lerp >= 1 && !otherFoot.IsMoving())
             {
                // Vector3 direction = Vector3.ProjectOnPlane(info.point - currentPosition, Vector3.up).normalized;
@@ -67,9 +67,9 @@ public class IKFootSolver : MonoBehaviour
                 angle = Vector3.Angle(body.forward, _dir);
                 isMovingForward = false;
                 isMovingBackward = false;
-                isMovingForward = angle < 130;
-                isMovingBackward = angle > 50;
-
+                isMovingForward = angle < 50;
+                isMovingBackward = angle > 130;
+                
                 if (dis > backStepDistance && isMovingBackward)
                 {
                     lerp = 0;
