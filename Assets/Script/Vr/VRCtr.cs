@@ -10,8 +10,9 @@ public class VRCtr : MonoBehaviour
     public static VRCtr instance;
     public Transform org;
     private XRInteractionManager xRInteractionManager;
-    public Material handMaterial;
+    public GameObject[] controllerModels;
     public XRBaseInteractor[] interactors;
+    public SkinnedMeshRenderer skinnedMeshRenderer;
 
     private void Awake()
     {
@@ -22,7 +23,7 @@ public class VRCtr : MonoBehaviour
     {
         org = FindObjectOfType<XROrigin>().transform;
         xRInteractionManager = GetComponentInChildren<XRInteractionManager>();
-        handMaterial.color = Color.white;
+        
 
         foreach (var interactor in interactors)
         {
@@ -60,10 +61,14 @@ public class VRCtr : MonoBehaviour
         //xRInteractionManager.CancelInteractorSelection(GetComponentsInChildren<XRBaseInteractor>());
     }
 
-    internal void ChangeColor(int charaterIndex)
+    internal void ShowOwnPlayer(int charaterIndex)
     {
-        Color color = CharaDatas.GetCharaData(charaterIndex).charaSkinColor;
-        handMaterial.color = color;
+        foreach(var c in controllerModels)
+        {
+            c.SetActive(false);
+        }
+        skinnedMeshRenderer.material = CharaDatas.GetCharaData(charaterIndex).charaSkinMaterial;
+        
 
     }
 }

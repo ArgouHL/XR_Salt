@@ -15,4 +15,4 @@ MonoBehaviour:
   charaterData:
     charaterIndex: 0
     charaterName: "\u9673\u5927\u6587"
-    charaSkinColor: {r: 1, g: 0, b: 0, a: 0}
+    charaSkinMaterial: {fileID: 2100000, guid: 2ed13b5dd989cd6449dbccca39c08add, type: 2}

@@ -206,11 +206,11 @@ public abstract class NetworkDiscovery<TBroadCast, TResponse> : MonoBehaviour
               
                 return;
             }
-            Debug.Log("s1");
+
             reader.ReadNetworkSerializable(out TResponse receivedResponse);
-            Debug.Log("s1");
+
             ResponseReceived(udpReceiveResult.RemoteEndPoint, receivedResponse);
-            Debug.Log("s1");
+  
             Debug.Log(udpReceiveResult);
         }
         catch (Exception e)

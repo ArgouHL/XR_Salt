@@ -94,7 +94,7 @@ public class NetworkPlayer : NetworkBehaviour
     {
         var data = CharaDatas.GetCharaData(newValue);
         //TurnONChara
-        SetCharaSkin(data.charaSkinColor);
+        SetCharaSkin(data.charaSkinMaterial);
         nameShow.ChangeName(data.charaterName);
 
         meshs = GetComponentsInChildren<Renderer>();
@@ -222,13 +222,13 @@ public class NetworkPlayer : NetworkBehaviour
 
     }
 
-    private void SetCharaSkin(Color charaSkinColor)
+    private void SetCharaSkin(Material charaSkinMaterial)
     {
         meshs = GetComponentsInChildren<Renderer>();
         foreach (var m in meshs)
         {
             m.enabled = true;
-            m.material.color = charaSkinColor;
+            m.material = charaSkinMaterial;
         }
     }
 

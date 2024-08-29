@@ -578,7 +578,7 @@ GameObject:
   - component: {fileID: 6065924887167766521}
   - component: {fileID: 7365611405681575200}
   m_Layer: 0
-  m_Name: 01a
+  m_Name: miniSalt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1487,7 +1487,31 @@ MonoBehaviour:
   chanDissovleCtr: {fileID: 6445517544475459542}
   saltDissovleCtr: {fileID: 7365611405681575200}
   saltAni: {fileID: 6065924887167766521}
-  aniAndSoudDuration: 32
+  startGuideDatas: []
+  guideDatas: []
+  endGuideDatas: []
+  startGuideVoice:
+    time: 0
+    chiVoice:
+      volume: 0
+      duration: 0
+      clip: {fileID: 0}
+    twVoice:
+      volume: 0
+      duration: 0
+      clip: {fileID: 0}
+  guideVoices: []
+  endGuideVoice:
+    time: 0
+    chiVoice:
+      volume: 0
+      duration: 0
+      clip: {fileID: 0}
+    twVoice:
+      volume: 0
+      duration: 0
+      clip: {fileID: 0}
+  guideStep: 0
 --- !u!114 &7933701032139836460
 MonoBehaviour:
   m_ObjectHideFlags: 0

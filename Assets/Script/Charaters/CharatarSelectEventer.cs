@@ -32,7 +32,7 @@ public class CharatarSelectEventer : NetworkBehaviour
         foreach (var m in meshs)
         {
 
-            m.material.color = charaSet.charaterData.charaSkinColor;
+           m.material=charaSet.charaterData.charaSkinMaterial;
         }
 
         DebugLogConsole.AddCommandInstance("CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
@@ -106,7 +106,7 @@ public class CharatarSelectEventer : NetworkBehaviour
         //if (IsServer)
         //    GetComponentInChildren<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV();
         CharaChoosedServerRpc(NetworkPlayer.ownPlayer.OwnerClientId);
-        VRCtr.instance.ChangeColor(charaSet.charaterData.charaterIndex);
+        VRCtr.instance.ShowOwnPlayer(charaSet.charaterData.charaterIndex);
     }
 
     [ServerRpc(RequireOwnership = false)]

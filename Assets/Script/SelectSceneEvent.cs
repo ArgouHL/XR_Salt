@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-1)]
 public class SelectSceneEvent : MonoBehaviour
 {
     public static SelectSceneEvent instance;

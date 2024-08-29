@@ -7,7 +7,7 @@ public class CharaterData
 {
     public int charaterIndex;
     public string charaterName;
-    public Color charaSkinColor;
+    public Material charaSkinMaterial;
 
 }
 
