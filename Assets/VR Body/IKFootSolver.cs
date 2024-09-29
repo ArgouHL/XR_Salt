@@ -72,13 +72,16 @@ public class IKFootSolver : MonoBehaviour
                 
                 if (dis > backStepDistance && isMovingBackward)
                 {
+                    Debug.Log("dis : " + dis);
                     lerp = 0;
-                    newPosition = info.point + _dir * stepLength + Quaternion.LookRotation(body.forward) * footOffset;
+                    newPosition = info.point + _dir * stepLength*0.5f + Quaternion.LookRotation(body.forward) * footOffset;
                     newNormal = info.normal;
+                    Debug.Log("isbackStepDistance");
                     isMoved = true;
                 }
                 else if (dis > stepDistance)
                 {
+                    Debug.Log("dis : "+ dis);
                     lerp = 0;
                     if (isMovingForward)
                     {
@@ -94,6 +97,7 @@ public class IKFootSolver : MonoBehaviour
                 }
                 else if (isMoved || vRrig.isRotating)
                 {
+                    
                     lerp = 0;
                     isMoved = false;
                     newPosition = info.point + Quaternion.LookRotation(body.forward) * footOffset;

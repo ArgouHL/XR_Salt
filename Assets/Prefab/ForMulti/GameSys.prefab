@@ -9,8 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8451907822311431216}
-  - component: {fileID: 1414141556517215857}
   - component: {fileID: 9124083371438822595}
+  - component: {fileID: 1414141556517215857}
+  - component: {fileID: 7264579082968017271}
   m_Layer: 0
   m_Name: GameSys
   m_TagString: Untagged
@@ -33,21 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1414141556517215857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3526184988105354465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84e09ca464888994b8e3b838ae8c1168, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  img: {fileID: 0}
-  waitTime: 30
-  gameTime: 120
 --- !u!114 &9124083371438822595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,3 +54,39 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &1414141556517215857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3526184988105354465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84e09ca464888994b8e3b838ae8c1168, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camPos: {fileID: 0}
+  img: {fileID: 0}
+  waitTime: 3
+  gameTime: 60
+  hintText: {fileID: 0}
+  chStart: {fileID: 11400000, guid: a9124c68c649a3b4695e7700e92b89ad, type: 2}
+  chCount: {fileID: 11400000, guid: 2e6a43a9166425540aacbb2a4e27834b, type: 2}
+  chEnd: {fileID: 11400000, guid: b88efc8586c261140938a8ba96215386, type: 2}
+  twEnd: {fileID: 11400000, guid: 6593d0b76a61a2349863a1a550a1293d, type: 2}
+  gameEnded:
+    m_InternalValue: 0
+--- !u!114 &7264579082968017271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3526184988105354465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c63287070a6c234bbb9fb55ba742507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camPos: {fileID: 0}

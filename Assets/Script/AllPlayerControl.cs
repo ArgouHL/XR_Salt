@@ -8,9 +8,9 @@ using UnityEngine.UIElements;
 public class AllPlayerControl : NetworkBehaviour
 {
     public static AllPlayerControl instance;
-    private Transform nowCamera
-        ;
-    private Vector3 cameraOrgPosition;
+    private  Transform nowCamera;
+    private  Vector3 cameraOrgPosition;
+    private  Quaternion cameraOrgRotation;
     private Dictionary<ulong, NetworkPlayer> playersDict = new Dictionary<ulong, NetworkPlayer>();
     public Vector2 DrawOffset = new Vector2(250, 250);
     private ulong targetPlayer;
@@ -85,7 +85,7 @@ public class AllPlayerControl : NetworkBehaviour
         Debug.Log("UpdateCamera");
     }
 
-    private void SetCamera(Transform t)
+    public  void SetCamera(Transform t)
     {
         nowCamera.position = t.position;
         nowCamera.rotation = t.rotation;
@@ -132,6 +132,13 @@ public class AllPlayerControl : NetworkBehaviour
         {
             np.Value.DisapperClientRpc();
         }
+    }
+
+    public  void SetCamOrgPos(Transform t)
+    {
+        cameraOrgPosition = t.position;
+        cameraOrgRotation = t.rotation;
+        SetCamera(t);
     }
 }
 

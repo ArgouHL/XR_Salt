@@ -11,7 +11,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class CharatarSelectEventer : NetworkBehaviour
 {
-    public CharaterObj charaSet;
+    private CharaterObj charaSet;
     public TMP_Text nameText;
     public GameObject CharaObj;
     private NetworkVariable<bool> chooseable = new NetworkVariable<bool>(true);
@@ -27,15 +27,10 @@ public class CharatarSelectEventer : NetworkBehaviour
             return;
         }
 
-        nameText.text = charaSet.charaterData.charaterName;
-        var meshs = GetComponentsInChildren<Renderer>();
-        foreach (var m in meshs)
-        {
+        
+       
 
-           m.material=charaSet.charaterData.charaSkinMaterial;
-        }
-
-        DebugLogConsole.AddCommandInstance("CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
+       // DebugLogConsole.AddCommandInstance("CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed" + charaSet.charaterData.charaterName, "CharaChoosed", this);
         charaSelect = GetComponentInParent<CharaSelectCtr>();
 
 
@@ -54,9 +49,9 @@ public class CharatarSelectEventer : NetworkBehaviour
 
     private void OnDisable()
     {
-        GetComponentInChildren<XRSimpleInteractable>().hoverEntered.RemoveListener((HoverEnterEventArgs ergs) => OnHoverEnter(ergs));
-        GetComponentInChildren<XRSimpleInteractable>().hoverExited.RemoveListener((HoverExitEventArgs ergs) => OnHoverExit(ergs));
-        GetComponentInChildren<XRSimpleInteractable>().activated.RemoveListener((ActivateEventArgs ergs) => OnTriggered(ergs));
+        //GetComponentInChildren<XRSimpleInteractable>().hoverEntered.RemoveListener((HoverEnterEventArgs ergs) => OnHoverEnter(ergs));
+        //GetComponentInChildren<XRSimpleInteractable>().hoverExited.RemoveListener((HoverExitEventArgs ergs) => OnHoverExit(ergs));
+        //GetComponentInChildren<XRSimpleInteractable>().activated.RemoveListener((ActivateEventArgs ergs) => OnTriggered(ergs));
     }
 
     private void OnHoverExit(HoverExitEventArgs ergs)
@@ -87,6 +82,19 @@ public class CharatarSelectEventer : NetworkBehaviour
 
     }
 
+    public void SetSkinAndName(CharaterObj _charaSet)
+    {
+        charaSet = _charaSet;
+        var meshs = GetComponentsInChildren<Renderer>();
+        nameText.text = charaSet.charaterData.charaterName;
+        foreach (var m in meshs)
+        {
+
+            m.material = charaSet.charaterData.charaSkinMaterial;
+        }
+    }
+
+
     internal void Unshow()
     {
         Debug.Log("Unshow");
@@ -107,6 +115,7 @@ public class CharatarSelectEventer : NetworkBehaviour
         //    GetComponentInChildren<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV();
         CharaChoosedServerRpc(NetworkPlayer.ownPlayer.OwnerClientId);
         VRCtr.instance.ShowOwnPlayer(charaSet.charaterData.charaterIndex);
+        GetComponent<AudioSource>().Play();
     }
 
     [ServerRpc(RequireOwnership = false)]

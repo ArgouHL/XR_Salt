@@ -36,6 +36,7 @@ public class VRrig : MonoBehaviour
     private Quaternion spineRotation;
     private Quaternion neckRotation;
     private LTDescr delayedCallTween;
+    private Vector3 lastFrontVector;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,13 +55,13 @@ public class VRrig : MonoBehaviour
     {
         spineRotTrack.localRotation = spineRotation;
         neckRotTrack.localRotation = neckRotation;
-        var frontVector = head.vrTarget.forward;
-        Debug.DrawRay(transform.position + Vector3.up, frontVector);
-        frontVector.y = 0;
-        frontVector = frontVector.normalized;
+        lastFrontVector = head.vrTarget.forward;    
+        Debug.DrawRay(transform.position + Vector3.up, lastFrontVector);
+        lastFrontVector.y = 0;
+        lastFrontVector = lastFrontVector.normalized;
 
         //vrTarget.rotation * Quaternion.Euler(trackingRotationOffset)
-        float angle = Vector3.Angle(transform.forward, frontVector.normalized);
+        float angle = Vector3.Angle(transform.forward, lastFrontVector.normalized);
 
         if (lerp >= 1)
         {
@@ -95,7 +96,7 @@ public class VRrig : MonoBehaviour
 
         if (isRotating)
         {
-            var rot = Quaternion.LookRotation(frontVector, Vector3.up);
+            var rot = Quaternion.LookRotation(lastFrontVector, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 540*Time.deltaTime);
         }
 
@@ -160,7 +161,7 @@ public class VRMap
     public Vector3 trackingPosOffset;
     public Vector3 trackingRotationOffset;
 
-    public void Map()
+    public virtual void Map()
     {
         rigTarget.position = vrTarget.TransformPoint(trackingPosOffset);
         rigTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
@@ -175,5 +176,29 @@ public class VRMap
         return _x > 180 ? _x : 180 - _x;
     }
 
+
+}
+
+[System.Serializable]
+public class VRMapHead:VRMap
+{
+    public float upRotateLimit;
+    public float downRotateLimit;
+    public float angle;
+    public override void Map()
+    {
+
+
+
+        rigTarget.position = vrTarget.TransformPoint(trackingPosOffset);
+
+
+
+        angle = vrTarget.rotation.eulerAngles.z;
+        
+        rigTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
+    }
+
+  
 
 }

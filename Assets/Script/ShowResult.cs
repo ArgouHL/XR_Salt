@@ -8,15 +8,19 @@ using UnityEngine;
 public class ShowResult : NetworkBehaviour
 {
     public TMP_Text testName;
-    private NetworkVariable<int> winnerChara = new NetworkVariable<int>();
-
+    public NetworkVariable<int> winnerChara = new NetworkVariable<int>();
+    public GuidingSoundData winSfx;
 
 
     public override void OnNetworkSpawn()
     {
         if (!IsServer)
             return;
-        LeanTween.delayedCall(5, () => SceneManageCtr.instance.LoadEndScene());
+        LeanTween.delayedCall(10, () => { 
+            SceneManageCtr.instance.LoadEndScene();
+            SfxPlayer.instance.StopPlay();
+        });
+
         winnerChara.Value = CharaSelectCtr.GetCharaIndex(SaltGame.GetHighestPlayer());
 
     }
@@ -33,9 +37,22 @@ public class ShowResult : NetworkBehaviour
 
     private void ShowWinner(int previousValue, int newValue)
     {
+        PlayWin(newValue);
+        PlayWinClientRpc(newValue);
+    }
+
+
+    public void PlayWin(int newValue)
+    {
         var name = CharaDatas.GetCharaData(newValue).charaterName;
         Debug.Log(name);
-        testName.text = name;
-        
+        testName.text = "推鹽最多的是:" + "\r\n" + name;
+        SfxPlayer.instance.PlaySound(winSfx.soundData);
+    }
+
+    [ClientRpc]
+    public void PlayWinClientRpc(int newValue)
+    {
+        PlayWin(newValue);
     }
 }

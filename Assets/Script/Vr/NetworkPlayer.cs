@@ -12,8 +12,8 @@ public class NetworkPlayer : NetworkBehaviour
     [SerializeField] internal Transform head;
     [SerializeField] private Transform leftHand;
     [SerializeField] private Transform rightHand;
+    [SerializeField] private GameObject model;
 
- 
 
     private VRRigReferences vrRig => VRRigReferences.instance;
 
@@ -66,7 +66,7 @@ public class NetworkPlayer : NetworkBehaviour
             ownPlayer = this;
             // CharaChangeServerRpc();
             Tele(new Vector3(0, 0, -3));
-
+            model.SetActive(false);
         }
         else
         {

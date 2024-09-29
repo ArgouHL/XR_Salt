@@ -11,6 +11,7 @@ public class VRCtr : MonoBehaviour
     public Transform org;
     private XRInteractionManager xRInteractionManager;
     public GameObject[] controllerModels;
+    public GameObject ownModel;
     public XRBaseInteractor[] interactors;
     public SkinnedMeshRenderer skinnedMeshRenderer;
 
@@ -67,6 +68,7 @@ public class VRCtr : MonoBehaviour
         {
             c.SetActive(false);
         }
+        ownModel.SetActive(true);
         skinnedMeshRenderer.material = CharaDatas.GetCharaData(charaterIndex).charaSkinMaterial;
         
 

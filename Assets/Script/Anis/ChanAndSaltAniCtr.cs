@@ -9,7 +9,10 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
 {
     public DissovleCtr chanDissovleCtr;
     public DissovleCtr saltDissovleCtr;
+    public DissovleCtr potDissovleCtr;
     public Animator saltAni;
+    public Animator chanAni;
+    public Animator potAni;
     // public float aniAndSoudDuration = 32;
 
     public GuidingSoundData[] startGuideDatas;
@@ -24,10 +27,12 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
     private void Init()
     {
         startGuideVoice = new MultiLangVoices();
-        guideVoices = new MultiLangVoices[5];
-        for (int i = 0; i < 5; i++)
+        guideVoices = new MultiLangVoices[6];
+        for (int i = 0; i < 6; i++)
         {
             guideVoices[i] = new MultiLangVoices();
+
+
         }
         endGuideVoice = new MultiLangVoices();
     }
@@ -93,15 +98,15 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
 
     }
 
-    
+
     private IEnumerator GuidingAni()
     {
         ChanShow();
         ChanShowClientRpc();
-          yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(3);
         ChanStartGuide();
         ChanStartGuideClientRpc();
-       
+
         yield return new WaitForSeconds(startGuideVoice.time);
         SaltShow();
         SaltShowClientRpc();
@@ -115,6 +120,13 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
         GuideEnd();
         GuideEndClientRpc();
         yield return new WaitForSeconds(endGuideVoice.time);
+        ChangetoPlayScene();
+    }
+
+    private void ChangetoPlayScene()
+    {
+        if (IsServer)
+            SceneManageCtr.instance.LoadPlayScene();
     }
 
     public void ChanShow()
@@ -124,28 +136,58 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
 
     public void ChanStartGuide()
     {
+        SetChanAni("Act2");
+        
+        LeanTween.delayedCall(15f, () =>
+         {
+             potDissovleCtr.Apper(() => potAni.SetTrigger("Play"));
+             SetChanAni("Act1");
+         });
+
+        LeanTween.delayedCall(25f, () =>
+        {
+            potDissovleCtr.Disapper();
+        });
+
+        if (IsServer)
+            return;
         GuideAudioPlayer.instance.PlaySound(startGuideVoice);
     }
 
     public void SaltShow()
     {
+        SetChanAni("Act2");
         saltDissovleCtr.Apper();
     }
 
     public void SaltGuide(int index)
     {
-        saltAni.ResetTrigger("Play");
-        saltAni.SetTrigger("Play");
+        saltAni.SetInteger("Index", index+1);
+        if (IsServer)
+            return;
         GuideAudioPlayer.instance.PlaySound(guideVoices[index]);
+
+
+    }
+
+
+    private void SetChanAni(string key)
+    {
+        chanAni.ResetTrigger("Idle");
+        chanAni.ResetTrigger("Act1");
+        chanAni.ResetTrigger("Act2");
+        chanAni.SetTrigger(key);
     }
 
     public void GuideEnd()
     {
+        if (IsServer)
+            return;
         GuideAudioPlayer.instance.PlaySound(endGuideVoice);
 
     }
 
- 
+
     [ClientRpc]
     public void ChanShowClientRpc()
     {
@@ -155,13 +197,13 @@ public class ChanAndSaltAniCtr : NetworkBehaviour
     [ClientRpc]
     public void ChanStartGuideClientRpc()
     {
-        GuideAudioPlayer.instance.PlaySound(startGuideVoice);
+        ChanStartGuide();
     }
 
     [ClientRpc]
     public void SaltShowClientRpc()
     {
-        ChanStartGuide();
+        SaltShow();
     }
 
     [ClientRpc]

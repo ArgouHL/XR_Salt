@@ -11,8 +11,7 @@ public class RodCtr : MonoBehaviour
 
     private XRGrabInteractable xrGrabInteractable => GetComponent<XRGrabInteractable>();
     [SerializeField] private GameObject digger;
-   
-
+    
     private void OnEnable ()
     {
         xrGrabInteractable.selectEntered.AddListener(EnableDigger);

@@ -27,9 +27,7 @@ public class VRStart : MonoBehaviour
     }
     public void StartJoin()
     {
-        count++;
-        if (count < 2)
-            return;
+
         NetworkLink.instance.JoinLan();
       
         //SceneManageCtr.instance.VrStart();

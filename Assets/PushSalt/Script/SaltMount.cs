@@ -37,6 +37,10 @@ public class SaltMount : NetworkBehaviour
 
     internal void AddVolume(float v)
     {
+        if (!IsOwner)
+            return;
+        if (SaltGame.instance.gameEnded.Value)
+            return;
         Debug.Log(v);
         volume.Value += v;
 
@@ -49,7 +53,7 @@ public class SaltMount : NetworkBehaviour
     {
         float scale = Mathf.Pow(((nowV + startVolume) * 1000) * 12 / Mathf.PI * 1.23f, 1f / 3f) / 100;
         mount.localScale = Vector3.one * scale;
-        volumeShow.text = nowV + "kg";
+        volumeShow.text = nowV.ToString("0.0") + "kg";
         GetComponentInChildren<MeshRenderer>().material.SetFloat("_NoiseScale", scale*1000);
         Debug.Log(scale);
     }

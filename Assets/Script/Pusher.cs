@@ -10,6 +10,8 @@ public class Pusher : MonoBehaviour
     [SerializeField] private float volume;
     private Vector3 frontVector;
     public bool test = false;
+    public AudioSource pushso;
+    public AudioClip pushClip;
     private void Awake()
     {
         rig = GetComponentInParent<Rigidbody>();
@@ -45,7 +47,8 @@ public class Pusher : MonoBehaviour
                     return;
             float v = volume + cell.Digged();
             volume = v < maxVolume ? v : maxVolume;
-           
+
+            pushso.PlayOneShot(pushClip);
         }
 
     }
@@ -60,6 +63,7 @@ public class Pusher : MonoBehaviour
                     return;
                 saltMount.AddVolume(volume);
                 volume = 0;
+                pushso.PlayOneShot(pushClip);
             }
         }
     }
